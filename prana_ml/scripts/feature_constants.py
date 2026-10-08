@@ -1,0 +1,34 @@
+"""
+prana_ml/scripts/feature_constants.py
+Exact Python mirror of lib/features/ai/feature_schema.dart.
+Do not edit a value here without editing it there and re-freezing both.
+"""
+
+HR_MIN_BPM = 40.0
+HR_RANGE_BPM = 160.0
+HR_DEV_CLAMP_MIN = -1.0
+HR_DEV_CLAMP_MAX = 2.0
+
+SPO2_MIN_PCT = 70.0
+SPO2_RANGE_PCT = 30.0
+SPO2_DROP_CLAMP_MAX = 30.0
+SPO2_DROP_DIVISOR = 10.0
+
+TREND_SLOPE_CLAMP_MIN = -2.0
+TREND_SLOPE_CLAMP_MAX = 2.0
+TREND_NORMALIZATION_BPM_PER_MIN = 15.0
+TREND_MIN_SAMPLES = 3
+TREND_MAX_SAMPLES = 8
+
+TEMP_MIN_C = 34.0
+TEMP_RANGE_C = 8.0
+TEMP_DEV_DIVISOR = 2.0
+TEMP_DEV_CLAMP_MIN = -1.0
+TEMP_DEV_CLAMP_MAX = 2.0
+
+ACTIVITY_REST = 0.0
+ACTIVITY_LOW = 0.25
+ACTIVITY_MODERATE_DEFAULT = 0.5
+ACTIVITY_HIGH = 0.85
+
+HRV_MAX_MS = 150.0

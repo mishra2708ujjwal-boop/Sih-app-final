@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>PRANA — App Overview &amp; Judge Prep</title>
+<style>
+  :root{
+    --brand:#15503a;        /* deep forest */
+    --brand2:#2e8b6b;       /* sage green */
+    --brand-band:#123f2e;
+    --ink:#1e2a24;
+    --muted:#5c6b63;
+    --faint:#8a978f;
+    --line:#d9e2dc;
+    --green-bg:#eaf3ee;
+    --green-bg2:#f3f8f5;
+    --amber:#9a6a12; --amber-bg:#fbf1dc;
+    --red:#a3342f;   --red-bg:#fbeae8;
+    --blue:#2a5f8f;  --blue-bg:#eaf1f8;
+    --mono:'Consolas','SFMono-Regular','Liberation Mono',monospace;
+    --sans:'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    font-size:10.3pt;
+    line-height:1.5;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .wrap{padding:0 15mm;}
+  p{margin:0 0 7pt;}
+  h1,h2,h3,h4{font-weight:700;color:var(--brand);margin:0;}
+  a{color:var(--brand2);text-decoration:none;}
+  small{color:var(--muted);}
+  code,.mono{font-family:var(--mono);font-size:9pt;}
+  .fp{font-family:var(--mono);font-size:8.7pt;color:var(--brand);background:var(--green-bg);
+      padding:0.5pt 3pt;border-radius:3px;border:0.5px solid #cfe0d6;white-space:nowrap;}
+
+  /* ---------- Cover ---------- */
+  .cover{
+    min-height:262mm;
+    background:linear-gradient(150deg,#15503a 0%,#1c6a4a 55%,#2e8b6b 100%);
+    color:#eafaf2;border-radius:0 0 0 0;margin:0;padding:26mm 15mm 18mm;
+    display:flex;flex-direction:column;justify-content:space-between;
+    page-break-after:always;position:relative;overflow:hidden;
+  }
+  .cover .ring{position:absolute;border-radius:50%;border:1.5px solid rgba(255,255,255,.16);}
+  .cover .r1{width:300px;height:300px;right:-90px;top:-70px;}
+  .cover .r2{width:200px;height:200px;right:10px;top:30px;border-color:rgba(255,255,255,.10);}
+  .cover .r3{width:420px;height:420px;left:-160px;bottom:-180px;border-color:rgba(255,255,255,.08);}
+  .cover .kicker{font-size:10pt;letter-spacing:.32em;text-transform:uppercase;color:#bfe9d5;font-weight:600;}
+  .cover h1.title{font-size:58pt;line-height:1;color:#fff;margin:6pt 0 0;letter-spacing:.02em;}
+  .cover .tag{font-size:14pt;color:#d9f5e8;margin-top:8pt;font-weight:500;max-width:130mm;line-height:1.35;}
+  .cover .doc{font-size:20pt;color:#fff;font-weight:700;margin-top:2mm;}
+  .cover .metabox{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);
+      border-radius:12px;padding:12pt 16pt;max-width:120mm;backdrop-filter:blur(2px);}
+  .cover .metabox div{font-size:9.6pt;color:#eafaf2;margin:2pt 0;}
+  .cover .metabox b{color:#fff;}
+  .cover .foot{font-size:8.4pt;color:#bfe9d5;max-width:150mm;line-height:1.5;}
+  .badge-row{display:flex;gap:8pt;flex-wrap:wrap;margin-top:4mm;}
+  .cbadge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:20px;
+     padding:4pt 11pt;font-size:8.6pt;color:#fff;font-weight:600;}
+
+  /* ---------- Section scaffolding ---------- */
+  .sec{padding-top:5mm;}
+  /* Sections flow and pack instead of each forcing a fresh page (avoids near-empty
+     pages after short sections). The bold bordered header is the visual separator;
+     break-after:avoid keeps a header from orphaning at the foot of a page. */
+  .sec-break{page-break-before:auto;margin-top:5mm;}
+  .sec-head{display:flex;align-items:flex-start;gap:10pt;border-bottom:2.5px solid var(--brand);
+     padding-bottom:5pt;margin-bottom:9pt;break-after:avoid;break-inside:avoid;}
+  .sec-num{flex:0 0 auto;background:var(--brand);color:#fff;font-weight:700;font-size:13pt;
+     width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-top:1pt;}
+  .sec-title{font-size:17pt;line-height:1.15;}
+  .sec-kick{font-size:8.2pt;letter-spacing:.16em;text-transform:uppercase;color:var(--brand2);font-weight:700;}
+  h3.sub{font-size:12pt;margin:9pt 0 4pt;color:var(--brand-band);}
+  h4.sub{font-size:10.4pt;margin:8pt 0 3pt;color:var(--brand-band);}
+
+  /* ---------- Callouts ---------- */
+  .callout{border-radius:9px;padding:8pt 11pt;margin:7pt 0;border:1px solid var(--line);break-inside:avoid;}
+  .callout .lab{font-size:7.6pt;letter-spacing:.13em;text-transform:uppercase;font-weight:700;margin-bottom:2pt;display:block;}
+  .c-plain{background:var(--green-bg);border-color:#cfe6da;}
+  .c-plain .lab{color:var(--brand);}
+  .c-tech{background:var(--blue-bg);border-color:#cfe0ef;}
+  .c-tech .lab{color:var(--blue);}
+  .c-evid{background:#f6f8f7;border-color:var(--line);}
+  .c-evid .lab{color:var(--muted);}
+  .c-evid .mono{color:#33443b;}
+  .c-warn{background:var(--amber-bg);border-color:#ecd9a6;}
+  .c-warn .lab{color:var(--amber);}
+  .c-red{background:var(--red-bg);border-color:#eec7c3;}
+  .c-red .lab{color:var(--red);}
+
+  /* ---------- Tables ---------- */
+  table{width:100%;border-collapse:collapse;margin:7pt 0;font-size:8.9pt;break-inside:auto;}
+  th{background:var(--brand);color:#fff;text-align:left;padding:5pt 7pt;font-weight:600;font-size:8.4pt;
+     letter-spacing:.02em;vertical-align:top;}
+  td{padding:4.5pt 7pt;border-bottom:0.6px solid var(--line);vertical-align:top;}
+  tbody tr:nth-child(even) td, table.z tr:nth-child(even) td{background:var(--green-bg2);}
+  .tag-ok{color:#1c6a4a;font-weight:700;}
+  .tag-no{color:var(--red);font-weight:700;}
+  .tag-part{color:var(--amber);font-weight:700;}
+  .tag-q{color:var(--blue);font-weight:700;}
+  table.small{font-size:8.4pt;}
+  table.small td, table.small th{padding:3.5pt 6pt;}
+
+  ul,ol{margin:4pt 0 8pt;padding-left:16pt;}
+  li{margin:2.5pt 0;}
+  .tight li{margin:1pt 0;}
+
+  .grid2{display:flex;gap:9pt;}
+  .grid2>div{flex:1;}
+  .card{border:1px solid var(--line);border-radius:9px;padding:9pt 11pt;break-inside:avoid;background:#fff;}
+  .card h4{margin:0 0 3pt;font-size:10pt;}
+  .lead{font-size:11pt;color:var(--brand-band);font-weight:500;line-height:1.5;margin-bottom:8pt;}
+
+  /* ---------- Figures / diagrams ---------- */
+  figure{margin:8pt 0;break-inside:avoid;border:1px solid var(--line);border-radius:10px;
+     padding:10pt;background:#fcfdfc;}
+  figcaption{font-size:8pt;color:var(--muted);margin-top:5pt;text-align:center;font-style:italic;}
+  svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+  .svg-t{font-family:var(--sans);}
+
+  /* ---------- TOC ---------- */
+  .toc{page-break-after:always;padding-top:8mm;}
+  .toc h2{font-size:19pt;border-bottom:2.5px solid var(--brand);padding-bottom:5pt;margin-bottom:8pt;}
+  .toc .grp{font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);
+     font-weight:700;margin:9pt 0 2pt;}
+  .toc ol{list-style:none;padding:0;margin:0;column-count:2;column-gap:14mm;}
+  .toc li{font-size:9.2pt;margin:2.6pt 0;color:var(--ink);break-inside:avoid;}
+  .toc li b{color:var(--brand);display:inline-block;width:20px;}
+  .toc .note{font-size:8.4pt;color:var(--muted);margin-top:10pt;column-span:all;border-top:1px solid var(--line);padding-top:6pt;}
+
+  .pill{display:inline-block;background:var(--green-bg);border:1px solid #cfe6da;border-radius:20px;
+     padding:1.5pt 8pt;font-size:8pt;color:var(--brand);font-weight:600;margin:1pt 2pt 1pt 0;}
+  .divider{height:1px;background:var(--line);margin:9pt 0;border:0;}
+  .q{font-weight:700;color:var(--brand-band);}
+  .qa{border-left:3px solid var(--brand2);padding:5pt 0 5pt 10pt;margin:7pt 0;break-inside:avoid;}
+  .qa .a{margin:2pt 0;}
+  .qa .a b{color:var(--brand);}
+  .kbd{font-family:var(--mono);background:#eef3f0;border:1px solid #cfe0d6;border-radius:4px;padding:0 4pt;font-size:8.6pt;}
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<section class="cover">
+  <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+  <div>
+    <div class="kicker">Personal Technical Training Manual</div>
+    <h1 class="title">PRANA</h1>
+    <div class="tag">Offline-First Edge-AI Personal Health &amp; Environment Companion</div>
+    <div class="badge-row">
+      <span class="cbadge">100% On-Device</span>
+      <span class="cbadge">Works Offline</span>
+      <span class="cbadge">On-Device ML</span>
+      <span class="cbadge">Real SOS: SMS · Call · GPS</span>
+      <span class="cbadge">Flutter / Dart</span>
+    </div>
+  </div>
+  <div>
+    <div class="doc">APP OVERVIEW</div>
+    <div class="tag" style="font-size:11pt;margin-top:2pt;">A complete, code-grounded walkthrough — written to let you present this app to judges with confidence.</div>
+  </div>
+  <div>
+    <div class="metabox">
+      <div><b>Project package:</b> prana_health &nbsp;·&nbsp; <b>Version:</b> 1.0.0+1</div>
+      <div><b>Platform:</b> Flutter 3.47.2 · Dart 3.13.2 · Android</div>
+      <div><b>Prepared:</b> 13 September 2026 &nbsp;·&nbsp; for SIH judging</div>
+      <div><b>Basis:</b> Direct inspection of the actual source code in this repository</div>
+    </div>
+    <p class="foot" style="margin-top:6mm;">Every claim in this document was checked against the real files in the codebase. Where the code does not implement something, it is marked <b style="color:#ffd7a1;">Not found in the current codebase</b> rather than guessed. Exact files are cited throughout so you can open and confirm each one yourself.</p>
+  </div>
+</section>
+
+<!-- ============================ TOC ============================ -->
+<div class="wrap toc">
+  <h2>Contents</h2>
+  <ol>
+    <div class="grp">Understand the app</div>
+    <li><b>1</b> Executive Summary</li>
+    <li><b>2</b> Complete Technology Stack</li>
+    <li><b>3</b> Project Architecture</li>
+    <li><b>4</b> Complete Application Flow</li>
+    <li><b>5</b> User Journey</li>
+    <li><b>6</b> Complete Feature Breakdown</li>
+    <div class="grp">How it works inside</div>
+    <li><b>7</b> "Backend" Explanation</li>
+    <li><b>8</b> Database Deep Dive</li>
+    <li><b>9</b> ML / AI Deep Dive <span class="pill" style="font-size:7pt;">most important</span></li>
+    <li><b>10</b> AI-via-API Analysis</li>
+    <li><b>11</b> Security</li>
+    <li><b>12</b> Error Handling</li>
+    <li><b>13</b> Offline vs Online</li>
+    <li><b>14</b> Performance</li>
+    <li><b>15</b> Scalability</li>
+    <div class="grp">Ship &amp; defend</div>
+    <li><b>16</b> Deployment Readiness</li>
+    <li><b>17</b> Deployment Architecture</li>
+    <li><b>18</b> Alternatives &amp; Why Not</li>
+    <li><b>19</b> Technical Decision Log</li>
+    <li><b>20</b> File-by-File Codebase Map</li>
+    <li><b>21</b> Important Functions Explained</li>
+    <li><b>22</b> Data Flow</li>
+    <li><b>23</b> APIs &amp; Third-Party Services</li>
+    <li><b>24</b> Testing</li>
+    <li><b>25</b> Current Limitations</li>
+    <li><b>26</b> Future Scope</li>
+    <div class="grp">Face the judges</div>
+    <li><b>27</b> Judge Question Prep (40+)</li>
+    <li><b>28</b> Top 20 High-Risk Questions</li>
+    <li><b>29</b> 60-Second Explanation</li>
+    <li><b>30</b> 3-Minute Technical Script</li>
+    <li><b>31</b> Demo Day Flow</li>
+    <li><b>32</b> Explain Like I'm 10</li>
+    <li><b>33</b> One-Page Cheat Sheet</li>
+    <li><b>34</b> Codebase Fact Check</li>
+  </ol>
+  <div class="note"><b>How to read this manual:</b> most sections open with an <b style="color:var(--brand);">In simple terms</b> box (plain English), then a <b style="color:var(--blue);">Technically</b> box (the precise version), and an <b style="color:var(--muted);">Evidence</b> line pointing at the exact file. Read the plain boxes end-to-end first; drop into the technical detail only where a judge presses.</div>
+</div>
+
+<!-- ============================ 1. EXEC SUMMARY ============================ -->
+<div class="wrap sec" id="s1">
+  <div class="sec-head"><div class="sec-num">1</div><div><div class="sec-kick">Start here</div><div class="sec-title">Executive Summary</div></div></div>
+
+  <p class="lead">PRANA is an offline-first, on-device health and environment companion for a wrist-worn band. It reads your body and your surroundings, learns what "normal" looks like <em>for you</em>, flags when something is going wrong, and — if you fall or hit the SOS — can send a real SMS, place a real phone call, and share your GPS location, all without any internet connection or server.</p>
+
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  Imagine a small health guardian that lives entirely inside your phone. A wearable band measures your heart rate, blood-oxygen, skin temperature, motion, and the heat, humidity and air quality around you. PRANA turns those numbers into a single easy-to-read <b>risk score</b>, tells you what to do about it in plain language, and quietly learns your personal baseline over time so it can spot <em>your</em> abnormal — not a textbook average. In an emergency it can raise the alarm by itself. Nothing is uploaded anywhere.</div>
+
+  <div class="callout c-tech"><span class="lab">Technically</span>
+  A Flutter/Dart (Material 3) Android application, architected offline-first with <b>no backend and no cloud</b>. A single <code>ChangeNotifier</code> controller (<span class="fp">PranaHealthController</span>) orchestrates a pipeline: BLE (or a demo generator) → sensor parsing → a frozen 16-feature vector → a <b>personalized on-device inference</b> stage (transparent physiological heuristics <em>plus</em> genuinely on-device unsupervised learning) → an uncapped 0–100 risk score → rule-based recommendations → UI, persistence, and emergency dispatch. Emergency actions are executed by the app's own native Android <code>MethodChannel</code>s (no third-party plugins).</div>
+
+  <h3 class="sub">What is genuinely notable here</h3>
+  <ul class="tight">
+    <li><b>Truly offline.</b> Every core feature works in airplane mode; the only outbound path is an emergency SMS/phone call over the cellular network — not the internet.</li>
+    <li><b>Real per-person learning on the device.</b> A running-statistics baseline (Welford + Mahalanobis distance) and a small autoencoder neural network are <em>trained on the phone itself</em> from your own calm readings — no pre-baked model, no server training.</li>
+    <li><b>Honest, transparent risk.</b> The domain risks (heat, breathing, cardiovascular, fatigue) come from hand-tuned physiological formulas you can read and defend line-by-line — not an opaque black box.</li>
+    <li><b>Emergency response that actually fires.</b> On a detected fall (after a cancelable countdown) or a manual SOS, the app dispatches a real SMS with identity + vitals + a Google-Maps location link, and places a real call, through native Android APIs.</li>
+  </ul>
+
+  <div class="callout c-warn"><span class="lab">Be honest about this on stage</span>
+  The shipped TensorFlow-Lite model files are <b>not</b> used at runtime (the live path is the personalized service described above). There is <b>no encryption at rest</b> yet (the encrypted-database stack is scaffolded but inactive). There are <b>no accuracy/precision/recall numbers</b>, and the displayed model confidence is a fixed placeholder. The release build is currently <b>debug-signed</b>. Section 25 lists every such limitation, and Section 33 gives you the exact "things I must not claim" list. Owning these honestly will impress judges more than hiding them.</div>
+</div>
+
+<!-- ============================ 2. TECH STACK ============================ -->
+<div class="wrap sec sec-break" id="s2">
+  <div class="sec-head"><div class="sec-num">2</div><div><div class="sec-kick">What it's built with</div><div class="sec-title">Complete Technology Stack</div></div></div>
+
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  The whole app is built in <b>Flutter</b> (Google's toolkit for building phone apps), written in the <b>Dart</b> language. It stores data in two simple on-device stores, talks to the wearable over <b>Bluetooth</b>, and reaches Android's phone features (SMS, calling, GPS, file sharing) through a thin bit of native <b>Kotlin</b> code the team wrote themselves.</div>
+
+  <h3 class="sub">Core platform</h3>
+  <table class="z">
+    <tr><th style="width:24%">Layer</th><th style="width:30%">Technology</th><th>Notes (verified from the repo)</th></tr>
+    <tr><td>Language</td><td>Dart 3.13.2</td><td>SDK constraint <code>^3.13.2</code> in <span class="fp">pubspec.yaml</span></td></tr>
+    <tr><td>Framework</td><td>Flutter 3.47.2 (stable)</td><td>UI toolkit; single codebase</td></tr>
+    <tr><td>Design system</td><td>Material 3, <b>light theme only</b></td><td><span class="fp">app_theme.dart</span> — <code>useMaterial3:true</code>; no dark theme defined</td></tr>
+    <tr><td>State management</td><td>Provider + one <code>ChangeNotifier</code></td><td>Single controller as composition root (see §3)</td></tr>
+    <tr><td>Target OS</td><td>Android</td><td><code>compileSdk 37</code>, Java/Kotlin 17 (<span class="fp">build.gradle.kts</span>)</td></tr>
+    <tr><td>Native glue</td><td>Kotlin, plain Android SDK</td><td>Two own <code>MethodChannel</code>s; no 3rd-party native plugins</td></tr>
+  </table>
+
+  <h3 class="sub">Dependencies actually declared (pubspec.yaml → resolved in pubspec.lock)</h3>
+  <p style="font-size:9pt;">Being able to say which dependencies are <em>live</em> versus <em>declared-but-inert</em> is exactly the kind of precision judges reward. This table is the ground truth.</p>
+  <table class="small z">
+    <tr><th style="width:30%">Package · version</th><th style="width:26%">Purpose</th><th>Actually used at runtime?</th></tr>
+    <tr><td>flutter_blue_plus 1.36.8</td><td>Bluetooth LE to the band</td><td><span class="tag-ok">Yes</span> — <span class="fp">bluetooth_sensor_data_source.dart</span></td></tr>
+    <tr><td>provider 6.1.5+1</td><td>State management</td><td><span class="tag-ok">Yes</span> — main.dart + ~17 screens</td></tr>
+    <tr><td>shared_preferences 2.5.5</td><td>Key-value storage</td><td><span class="tag-ok">Yes</span> — the app's real settings/profile/summary store</td></tr>
+    <tr><td>sembast 3.8.10</td><td>Pure-Dart NoSQL DB</td><td><span class="tag-ok">Yes</span> — backs the ML pipeline (<span class="fp">vitals_sample_store.dart</span>)</td></tr>
+    <tr><td>pdf 3.13.0</td><td>PDF generation</td><td><span class="tag-ok">Yes</span> — doctor report (<span class="fp">report_pdf_builder.dart</span>)</td></tr>
+    <tr><td>path_provider 2.1.6 · path 1.9.1</td><td>File-system dirs / paths</td><td><span class="tag-ok">Yes</span> — report, export, sembast DB</td></tr>
+    <tr><td>intl 0.19.0</td><td>Date/number formatting</td><td><span class="tag-ok">Yes</span> — throughout the UI</td></tr>
+    <tr><td>tflite_flutter 0.12.1</td><td>On-device TFLite inference</td><td><span class="tag-no">No (dead code)</span> — imported only by an un-instantiated service</td></tr>
+    <tr><td>flutter_secure_storage 11.0.0</td><td>Keystore for a DB passphrase</td><td><span class="tag-no">No</span> — reachable only via a never-called key manager</td></tr>
+    <tr><td>drift 2.34.4 · sqlite3 3.5.2</td><td>SQLite ORM + bindings</td><td><span class="tag-no">No</span> — no <code>package:drift</code> import anywhere</td></tr>
+    <tr><td>sqlite3_flutter_libs 0.6.0 · sqlcipher_flutter_libs 0.7.0</td><td>Native SQLite / SQLCipher libs</td><td><span class="tag-no">No</span> — companions to the unused SQL stack</td></tr>
+    <tr><td>cupertino_icons 1.0.9</td><td>iOS-style icons</td><td><span class="tag-no">No</span> — template boilerplate</td></tr>
+  </table>
+  <p style="font-size:8.6pt;"><b>Dev dependencies:</b> <code>flutter_test</code> (used — 6 test files), <code>flutter_lints 6.0.0</code> (used via <span class="fp">analysis_options.yaml</span>), plus <code>drift_dev 2.34.6</code>, <code>build_runner 2.16.1</code> and <code>test 1.31.1</code> which are unused/redundant (no generated files exist).</p>
+
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">pubspec.yaml, pubspec.lock, analysis_options.yaml, android/app/build.gradle.kts</span></div>
+
+  <div class="callout c-warn"><span class="lab">Why the inert packages matter</span>
+  An entire <b>encrypted-SQLite persistence stack was scaffolded but never wired in</b> (drift, sqlite3, sqlcipher, flutter_secure_storage). The app actually persists through SharedPreferences and sembast. This is the single most important "gotcha" to pre-empt: if a judge greps the pubspec and asks "so you're using an encrypted SQLCipher database?", the correct, confident answer is "those are scaffolded for a future encrypted store; today persistence is SharedPreferences + sembast, in plaintext — here's the file that proves it." (See §8, §11, §25.)</div>
+</div>
+
+<!-- ============================ 3. ARCHITECTURE ============================ -->
+<div class="wrap sec sec-break" id="s3">
+  <div class="sec-head"><div class="sec-num">3</div><div><div class="sec-kick">How the pieces fit</div><div class="sec-title">Project Architecture</div></div></div>
+
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  Think of the app as four stacked layers. At the top is what you <b>see</b> (the screens). Under that sits one <b>brain</b> object that holds all the current numbers and tells the screens when to refresh. The brain calls a set of <b>specialist helpers</b> (one learns your baseline, one scores risk, one writes advice, one watches for falls, one handles emergencies). At the bottom sits where the <b>data comes from and goes</b> (the Bluetooth band or a demo generator, two small on-device stores, and a thin native bridge to Android).</div>
+
+  <div class="callout c-tech"><span class="lab">Technically</span>
+  A layered, single-controller architecture. <span class="fp">PranaHealthController</span> (a <code>ChangeNotifier</code>) is the composition root and single source of truth; it owns every service and is provided once at the top of the widget tree. Screens subscribe with <code>context.watch</code> / <code>context.read</code>. Two auxiliary providers expose the raw vitals store (read-only, for CSV export) and a live ML-personalization status notifier. Two <code>ValueNotifier</code>s inside the controller (a 10&nbsp;Hz motion trace and the ML status) push high-frequency updates without rebuilding the whole tree.</div>
+
+  <figure>
+    <svg viewBox="0 0 720 440" role="img" aria-label="Layered architecture diagram">
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 z" fill="#15503a"/>
+        </marker>
+        <style>
+          .box{fill:#fff;stroke:#2e8b6b;stroke-width:1.2;rx:8;}
+          .lyr{fill:#eaf3ee;stroke:#cfe6da;stroke-width:1;}
+          .h{font:700 12px 'Segoe UI';fill:#15503a;}
+          .t{font:10px 'Segoe UI';fill:#1e2a24;}
+          .s{font:9px 'Segoe UI';fill:#5c6b63;}
+          .w{font:700 10px 'Segoe UI';fill:#fff;}
+          .lb{font:700 9px 'Segoe UI';fill:#2e8b6b;letter-spacing:1px;}
+        </style>
+      </defs>
+
+      <!-- Layer 1 UI -->
+      <rect class="lyr" x="15" y="12" width="560" height="66" rx="9"/>
+      <text class="lb" x="26" y="27">PRESENTATION · Flutter UI (Material 3, light)</text>
+      <rect class="box" x="26" y="34" width="120" height="34" rx="7"/><text class="t" x="41" y="55">16 Screens</text>
+      <rect class="box" x="156" y="34" width="140" height="34" rx="7"/><text class="t" x="171" y="55">Shared widgets</text>
+      <rect class="box" x="306" y="34" width="120" height="34" rx="7"/><text class="t" x="318" y="55">IndexedStack</text>
+      <rect class="box" x="436" y="34" width="128" height="34" rx="7"/><text class="t" x="448" y="49">Header SOS</text><text class="s" x="448" y="62">+ nav shell</text>
+
+      <!-- Layer 2 State -->
+      <rect x="15" y="92" width="560" height="52" rx="9" fill="#15503a"/>
+      <text class="w" x="26" y="112">STATE · PranaHealthController  (single ChangeNotifier — the app's brain)</text>
+      <text x="26" y="130" style="font:9px 'Segoe UI';fill:#bfe9d5;">provided once via Provider · notifyListeners() drives every rebuild · 2 ValueNotifiers for 10&#8202;Hz updates</text>
+
+      <!-- Layer 3 Services -->
+      <rect class="lyr" x="15" y="158" width="560" height="120" rx="9"/>
+      <text class="lb" x="26" y="173">DOMAIN SERVICES</text>
+      <rect class="box" x="26" y="180" width="122" height="40" rx="7"/><text class="t" x="34" y="197">Baseline</text><text class="s" x="34" y="211">learns "normal"</text>
+      <rect class="box" x="158" y="180" width="130" height="40" rx="7"/><text class="t" x="166" y="197">Feature Processor</text><text class="s" x="166" y="211">16-feature vector</text>
+      <rect class="box" x="298" y="180" width="140" height="40" rx="7"/><text class="t" x="306" y="197">Personalized ML</text><text class="s" x="306" y="211">inference (§9)</text>
+      <rect class="box" x="448" y="180" width="116" height="40" rx="7"/><text class="t" x="456" y="197">Risk Engine</text><text class="s" x="456" y="211">0–100 score</text>
+      <rect class="box" x="26" y="228" width="122" height="40" rx="7"/><text class="t" x="34" y="245">Recommend.</text><text class="s" x="34" y="259">advice rules</text>
+      <rect class="box" x="158" y="228" width="130" height="40" rx="7"/><text class="t" x="166" y="245">Fall Detection</text><text class="s" x="166" y="259">3-stage rule</text>
+      <rect class="box" x="298" y="228" width="140" height="40" rx="7"/><text class="t" x="306" y="245">Emergency</text><text class="s" x="306" y="259">SMS · call · GPS</text>
+      <rect class="box" x="448" y="228" width="116" height="40" rx="7"/><text class="t" x="456" y="245">Privacy</text><text class="s" x="456" y="259">counts · erase</text>
+
+      <!-- Layer 4 Data -->
+      <rect class="lyr" x="15" y="292" width="560" height="66" rx="9"/>
+      <text class="lb" x="26" y="307">DATA &amp; PLATFORM</text>
+      <rect class="box" x="26" y="314" width="150" height="36" rx="7"/><text class="t" x="34" y="330">Sensors</text><text class="s" x="34" y="344">BLE · Mock (demo)</text>
+      <rect class="box" x="186" y="314" width="180" height="36" rx="7"/><text class="t" x="194" y="330">Persistence</text><text class="s" x="194" y="344">SharedPreferences · sembast</text>
+      <rect class="box" x="376" y="314" width="188" height="36" rx="7"/><text class="t" x="384" y="330">Native bridge</text><text class="s" x="384" y="344">MethodChannels → Android</text>
+
+      <!-- Native side column -->
+      <rect x="600" y="92" width="106" height="266" rx="9" fill="#123f2e"/>
+      <text class="w" x="612" y="112">ANDROID</text>
+      <text x="612" y="128" style="font:9px 'Segoe UI';" fill="#bfe9d5">MainActivity.kt</text>
+      <rect x="612" y="140" width="82" height="46" rx="6" fill="#1c6a4a"/><text class="w" x="620" y="158" style="font:700 9px 'Segoe UI';">prana/</text><text class="w" x="620" y="171" style="font:700 9px 'Segoe UI';">emergency</text>
+      <rect x="612" y="196" width="82" height="40" rx="6" fill="#1c6a4a"/><text class="w" x="620" y="214" style="font:700 9px 'Segoe UI';">prana/files</text>
+      <text x="612" y="256" style="font:8px 'Segoe UI';" fill="#bfe9d5">SmsManager</text>
+      <text x="612" y="270" style="font:8px 'Segoe UI';" fill="#bfe9d5">ACTION_CALL</text>
+      <text x="612" y="284" style="font:8px 'Segoe UI';" fill="#bfe9d5">LocationMgr</text>
+      <text x="612" y="298" style="font:8px 'Segoe UI';" fill="#bfe9d5">FileProvider</text>
+
+      <!-- arrows -->
+      <line x1="295" y1="78" x2="295" y2="90" stroke="#15503a" stroke-width="1.4" marker-end="url(#ar)"/>
+      <line x1="295" y1="144" x2="295" y2="156" stroke="#15503a" stroke-width="1.4" marker-end="url(#ar)"/>
+      <line x1="295" y1="278" x2="295" y2="290" stroke="#15503a" stroke-width="1.4" marker-end="url(#ar)"/>
+      <line x1="470" y1="332" x2="598" y2="230" stroke="#15503a" stroke-width="1.2" marker-end="url(#ar)"/>
+    </svg>
+    <figcaption>Layered architecture. One controller mediates between the UI and every service; the native Kotlin bridge is reached only through the data layer. Verified against <span class="mono">main.dart</span>, <span class="mono">app.dart</span>, <span class="mono">prana_health_controller.dart</span>, <span class="mono">MainActivity.kt</span>.</figcaption>
+  </figure>
+
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">lib/main.dart:13–63 · lib/app/app.dart · lib/core/services/prana_health_controller.dart:38–46 · android/.../MainActivity.kt</span></div>
+</div>
+
+<!-- ============================ 4. APP FLOW ============================ -->
+<div class="wrap sec sec-break" id="s4">
+  <div class="sec-head"><div class="sec-num">4</div><div><div class="sec-kick">From tap to insight</div><div class="sec-title">Complete Application Flow</div></div></div>
+
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  When you open the app it sets up its storage and its learning model, shows a short animated splash, then either walks a first-time user through onboarding or drops a returning user straight onto the home screen. From then on, every couple of seconds a fresh reading arrives, the brain runs it through the pipeline, and the screens update.</div>
+
+  <div class="grid2">
+    <div>
+      <figure>
+        <svg viewBox="0 0 300 470" role="img" aria-label="Application startup flowchart">
+          <defs>
+            <marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2e8b6b"/></marker>
+            <style>.fb{fill:#eaf3ee;stroke:#2e8b6b;stroke-width:1.1;}.fd{fill:#fbf1dc;stroke:#9a6a12;stroke-width:1.1;}.ft{font:9px 'Segoe UI';fill:#1e2a24;}.fh{font:700 9px 'Segoe UI';fill:#15503a;}.fe{stroke:#2e8b6b;stroke-width:1.2;fill:none;}</style>
+          </defs>
+          <rect class="fb" x="70" y="8" width="160" height="30" rx="7"/><text class="fh" x="150" y="27" text-anchor="middle">main()</text>
+          <line class="fe" x1="150" y1="38" x2="150" y2="50" marker-end="url(#ar2)"/>
+          <rect class="fb" x="40" y="52" width="220" height="34" rx="7"/><text class="ft" x="150" y="66" text-anchor="middle">ensureInitialized()</text><text class="ft" x="150" y="79" text-anchor="middle">LocalStorageService.init()</text>
+          <line class="fe" x1="150" y1="86" x2="150" y2="98" marker-end="url(#ar2)"/>
+          <rect class="fb" x="30" y="100" width="240" height="46" rx="7"/><text class="fh" x="150" y="116" text-anchor="middle">Build on-device ML pipeline</text><text class="ft" x="150" y="130" text-anchor="middle">open VitalsSampleStore · load/create</text><text class="ft" x="150" y="142" text-anchor="middle">PersonalModel · wrap MockInference</text>
+          <line class="fe" x1="150" y1="146" x2="150" y2="158" marker-end="url(#ar2)"/>
+          <rect class="fb" x="55" y="160" width="190" height="34" rx="7"/><text class="ft" x="150" y="174" text-anchor="middle">runApp(MultiProvider)</text><text class="ft" x="150" y="187" text-anchor="middle">→ PranaApp</text>
+          <line class="fe" x1="150" y1="194" x2="150" y2="206" marker-end="url(#ar2)"/>
+          <rect class="fb" x="70" y="208" width="160" height="32" rx="7"/><text class="ft" x="150" y="228" text-anchor="middle">SplashScreen (~3.4s)</text>
+          <line class="fe" x1="150" y1="240" x2="150" y2="252" marker-end="url(#ar2)"/>
+          <polygon class="fd" points="150,252 245,286 150,320 55,286"/><text class="fh" x="150" y="283" text-anchor="middle">First run?</text><text class="ft" x="150" y="297" text-anchor="middle">onboarding done?</text>
+          <line class="fe" x1="55" y1="286" x2="30" y2="286" marker-end="url(#ar2)"/><text class="ft" x="38" y="279">yes→</text>
+          <rect class="fb" x="8" y="330" width="120" height="40" rx="7"/><text class="ft" x="68" y="346" text-anchor="middle">Onboarding</text><text class="ft" x="68" y="359" text-anchor="middle">slides + profile</text>
+          <line class="fe" x1="245" y1="286" x2="270" y2="286"/><line class="fe" x1="270" y1="286" x2="270" y2="352"/><text class="ft" x="248" y="279">no</text>
+          <rect class="fb" x="150" y="330" width="120" height="40" rx="7"/><text class="fh" x="210" y="346" text-anchor="middle">Main shell</text><text class="ft" x="210" y="359" text-anchor="middle">IndexedStack ×5</text>
+          <line class="fe" x1="68" y1="370" x2="68" y2="392"/><line class="fe" x1="68" y1="392" x2="150" y2="392"/>
+          <line class="fe" x1="210" y1="370" x2="210" y2="392" marker-end="url(#ar2)"/>
+          <rect class="fb" x="120" y="394" width="180" height="30" rx="7"/><text class="ft" x="210" y="413" text-anchor="middle">Home · Vitals · Environment</text>
+          <line class="fe" x1="210" y1="424" x2="210" y2="436" marker-end="url(#ar2)"/>
+          <rect x="90" y="438" width="200" height="26" rx="7" fill="#15503a"/><text x="190" y="455" text-anchor="middle" style="font:700 9px 'Segoe UI';" fill="#fff">live sensor loop → pipeline</text>
+        </svg>
+        <figcaption>Startup &amp; branch. <span class="mono">main.dart:13–63</span>, <span class="mono">app.dart:42–55</span>.</figcaption>
+      </figure>
+    </div>
+    <div>
+      <h3 class="sub">The per-reading pipeline</h3>
+      <p style="font-size:9.2pt;">Once the shell is up, a sensor stream (real BLE, or the demo generator in Demo mode) delivers a reading roughly every 2&nbsp;seconds. For each reading the controller runs:</p>
+      <ol style="font-size:9.2pt;">
+        <li><b>Parse</b> the raw packet into typed readings (health, motion, environment).</li>
+        <li><b>Update baseline</b> — feed calm readings into the running "normal" model.</li>
+        <li><b>Extract features</b> — build the frozen 16-number feature vector.</li>
+        <li><b>Infer</b> — run the personalized inference stage → per-domain risks + an overall anomaly signal.</li>
+        <li><b>Score risk</b> — combine into an uncapped 0–100 risk value + level.</li>
+        <li><b>Recommend</b> — pick specific advice via the rule cascade.</li>
+        <li><b>Notify</b> — call <code>notifyListeners()</code> so subscribed screens repaint.</li>
+        <li><b>Persist</b> — roll the day's numbers into a <code>DailySummary</code>; store calm samples for learning.</li>
+        <li><b>Watch for falls</b> — the motion stream feeds fall detection independently; a fall arms the emergency countdown.</li>
+      </ol>
+      <div class="callout c-warn" style="margin-top:6pt;"><span class="lab">Important default</span>
+      On a <b>fresh install the sensor source is real BLE</b> (demo mode defaults off). So with no band paired and Demo mode not enabled, the screens legitimately show "no live data yet." For a demo, either pair a band or turn on Demo mode first — otherwise the home screen is intentionally blank.</div>
+    </div>
+  </div>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">lib/main.dart · lib/app/app.dart · lib/core/services/prana_health_controller.dart (reading pipeline; notifyListeners at ~:458)</span></div>
+</div>
+
+<!-- ============================ 5. USER JOURNEY ============================ -->
+<div class="wrap sec sec-break" id="s5">
+  <div class="sec-head"><div class="sec-num">5</div><div><div class="sec-kick">What a person does</div><div class="sec-title">User Journey</div></div></div>
+
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  A first-time user is shown a few explainer screens and asked for the basics that make an emergency alert useful (name, age, a condition or two, an emergency contact). After that, they live mostly on the Home screen watching their risk score, dip into Vitals or Environment for detail, and — only if something goes wrong — hit SOS or let a detected fall raise the alarm.</p></div>
+
+  <table class="z">
+    <tr><th style="width:18%">Stage</th><th style="width:34%">What the user sees / does</th><th>Where it lives</th></tr>
+    <tr><td>First launch</td><td>Animated splash, then 3 explainer slides + a real profile-setup step (so the first SOS names a real person, not the sample profile)</td><td><span class="fp">splash_screen.dart</span>, <span class="fp">onboarding_screen.dart</span></td></tr>
+    <tr><td>Home</td><td>The big risk score, live vitals overview, and the single most relevant piece of advice</td><td><span class="fp">dashboard_screen.dart</span></td></tr>
+    <tr><td>Vitals</td><td>Per-metric dials &amp; charts (HR, SpO₂, temperature, sleep) read against the learned baseline</td><td><span class="fp">health_screen.dart</span></td></tr>
+    <tr><td>Environment</td><td>Feels-like heat, temperature, humidity, air quality (AQI), safe-exposure time, with per-condition advice</td><td><span class="fp">environment_screen.dart</span></td></tr>
+    <tr><td>Insights</td><td>The on-device analysis: the risk score explained, with the specific drivers behind it</td><td><span class="fp">insights_screen.dart</span></td></tr>
+    <tr><td>Me / Profile</td><td>Profile, learned baseline, emergency contacts, settings — all editable and persisted</td><td><span class="fp">profile_screen.dart</span></td></tr>
+    <tr><td>Emergency</td><td>Manual SOS (swipe to confirm); on a fall, a 10-second cancelable countdown then auto-dispatch</td><td><span class="fp">emergency_screen.dart</span>, <span class="fp">sos_action_button.dart</span></td></tr>
+    <tr><td>Extras</td><td>History (day-by-day), doctor PDF report, CSV data export, device/BLE controls, privacy counts, demo lab</td><td>history / report / data_export / devices / privacy / demo</td></tr>
+  </table>
+
+  <div class="callout c-tech"><span class="lab">Technically</span>
+  Navigation is hybrid: the five primary destinations live in an <code>IndexedStack</code> inside <span class="fp">MainNavigationShell</span> (preserving scroll state), while secondary screens (emergency, devices, privacy, demo lab, fall detection, history, report) are pushed as named <code>MaterialPageRoute</code>s. A persistent SOS disc sits in every destination's header via a small <code>EmergencyLauncher</code> <code>InheritedWidget</code>; the emergency screen is also auto-surfaced by a stream subscription so a fall opens it even if the user is elsewhere.</div>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">lib/app/app.dart:76–513 · lib/app/routes.dart:19–38 · lib/features/emergency/sos_action_button.dart</span></div>
+</div>
+
+<!-- ============================ 6. FEATURES ============================ -->
+<div class="wrap sec sec-break" id="s6">
+  <div class="sec-head"><div class="sec-num">6</div><div><div class="sec-kick">Everything it does</div><div class="sec-title">Complete Feature Breakdown</div></div></div>
+
+  <table class="small z">
+    <tr><th style="width:22%">Feature</th><th style="width:40%">What it does</th><th>Real / Heuristic / Demo</th></tr>
+    <tr><td>Live vitals monitoring</td><td>HR, SpO₂, skin temperature, motion streamed from the band over BLE and parsed into typed readings</td><td><span class="tag-ok">Real</span> (needs a band)</td></tr>
+    <tr><td>Environment monitoring</td><td>Ambient temperature, humidity, AQI from the band; heat-index computed on the phone</td><td><span class="tag-ok">Real</span> (from band)</td></tr>
+    <tr><td>Personal baseline learning</td><td>Learns your resting normal from calm readings; shows deviations against it</td><td><span class="tag-ok">Real</span> on-device</td></tr>
+    <tr><td>Risk score (0–100)</td><td>Single combined score + level, uncapped natural range, with named drivers</td><td><span class="tag-part">Heuristic</span> + personalization</td></tr>
+    <tr><td>Per-domain risks</td><td>Heat stress, respiratory, cardiovascular, fatigue sub-scores</td><td><span class="tag-part">Heuristic</span> (physiological formulas)</td></tr>
+    <tr><td>Personalized anomaly</td><td>Flags "unusual for <em>you</em>" via running stats + a small on-device autoencoder</td><td><span class="tag-ok">Real</span> on-device ML</td></tr>
+    <tr><td>Recommendations</td><td>Specific, situation-aware advice (not "drink water" clichés)</td><td><span class="tag-part">Rule-based</span></td></tr>
+    <tr><td>Fall detection</td><td>3-stage rule on the band's IMU → arms emergency countdown</td><td><span class="tag-ok">Real</span> (band IMU)</td></tr>
+    <tr><td>Emergency dispatch</td><td>Real SMS (identity + vitals + Maps link) + real phone call + GPS</td><td><span class="tag-ok">Real</span> (native Android)</td></tr>
+    <tr><td>Doctor report (PDF)</td><td>Multi-page A4 PDF with charts, baseline, period summary, disclaimer</td><td><span class="tag-ok">Real</span> (pure-Dart)</td></tr>
+    <tr><td>Data export (CSV)</td><td>Exports recorded calm ML readings incl. the exact feature vector</td><td><span class="tag-ok">Real</span></td></tr>
+    <tr><td>History</td><td>Day-by-day record from persisted daily summaries (≤90 days)</td><td><span class="tag-ok">Real</span></td></tr>
+    <tr><td>Privacy panel</td><td>Real counts of what's stored locally; export / erase</td><td><span class="tag-ok">Real</span></td></tr>
+    <tr><td>Disaster scenarios</td><td>6 replayable scenarios (heatwave, air pollution, flood, cyclone, elderly, normal)</td><td><span class="tag-no">Demo only</span></td></tr>
+    <tr><td>Sleep &amp; recovery</td><td>Sleep staging panel</td><td><span class="tag-no">Demo</span> (fixed sample data)</td></tr>
+  </table>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">lib/features/* (per-screen), mock_sensor_data_source.dart, fall_detection_service.dart, emergency_dispatcher.dart, report_pdf_builder.dart, data_export_service.dart</span></div>
+</div>
+
+<!-- ============================ 7. BACKEND ============================ -->
+<div class="wrap sec sec-break" id="s7">
+  <div class="sec-head"><div class="sec-num">7</div><div><div class="sec-kick">Where's the server?</div><div class="sec-title">"Backend" Explanation</div></div></div>
+
+  <div class="callout c-red"><span class="lab">There is no backend — and that's the point</span>
+  PRANA has <b>no server, no cloud, no REST/GraphQL API, no database server, and no authentication service.</b> Searched for and <b>not found in the current codebase.</b> This is a deliberate offline-first design, not a missing piece.</div>
+
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  Everything a "backend" would normally do — store data, run the analysis, make decisions — happens right on the phone. The phone <em>is</em> the backend. That's why it works with no signal, in a flood or a remote village, and why your health data never leaves the device.</div>
+
+  <div class="callout c-tech"><span class="lab">Technically</span>
+  What would be "backend responsibilities" are implemented as an on-device service layer coordinated by <span class="fp">PranaHealthController</span>: ingestion (sensor sources), transformation (feature processor), inference (personalized ML service), decision (risk + recommendation engines), persistence (SharedPreferences + sembast), and side-effects (native emergency/file channels). There is no network client in the app at all for its own data.</div>
+
+  <h3 class="sub">The only "API-like" table there is (on-device method channels)</h3>
+  <table class="z">
+    <tr><th style="width:26%">Channel</th><th style="width:34%">Methods</th><th>What it reaches</th></tr>
+    <tr><td><code>prana/emergency</code></td><td>requestPermissions, permissions, getLocation, sendSms, placeCall</td><td>Android SmsManager, ACTION_CALL, LocationManager</td></tr>
+    <tr><td><code>prana/files</code></td><td>shareFile, openFile</td><td>androidx FileProvider (share/open the PDF/CSV)</td></tr>
+  </table>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">android/app/src/main/kotlin/.../MainActivity.kt (EMERGENCY_CHANNEL, FILES_CHANNEL) · emergency_dispatcher.dart · report_service.dart (FileSharer)</span></div>
+</div>
+
+<!-- ============================ 8. DATABASE ============================ -->
+<div class="wrap sec sec-break" id="s8">
+  <div class="sec-head"><div class="sec-num">8</div><div><div class="sec-kick">Where data lives</div><div class="sec-title">Database Deep Dive</div></div></div>
+
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  There are two little storage boxes on the phone. The first (SharedPreferences) is a simple labelled key-value box — it holds your profile, your learned baseline, your settings, and up to 90 daily summaries. The second (sembast) is a tiny on-device database that holds the raw "calm" readings the learning model trains on, plus the model itself. Both are plain and local; nothing is encrypted yet.</div>
+
+  <div class="grid2">
+    <div class="card"><h4>① SharedPreferences</h4>
+      <p style="font-size:9pt;margin:0;"><b>Via</b> <span class="fp">local_storage_service.dart</span>. Simple key→value.</p>
+      <ul class="tight" style="font-size:8.8pt;">
+        <li>User profile (name, age, sex, conditions, contact)</li>
+        <li>Learned baseline (normal HR/SpO₂/temp, readings learned)</li>
+        <li>App settings + onboarding-complete flag</li>
+        <li><b>DailySummary × up to 90</b> (retention 90 days)</li>
+      </ul>
+      <p style="font-size:8.6pt;margin:0;color:var(--muted);">No raw minute-by-minute history is kept here — only daily rollups.</p>
+    </div>
+    <div class="card"><h4>② sembast (prana_ml.db)</h4>
+      <p style="font-size:9pt;margin:0;"><b>Via</b> <span class="fp">vitals_sample_store.dart</span>. Pure-Dart NoSQL.</p>
+      <ul class="tight" style="font-size:8.8pt;">
+        <li>Recorded <b>calm feature vectors</b> (16 numbers + timestamp) — the ML training data</li>
+        <li>The persisted <b>PersonalModel</b> (running stats) &amp; autoencoder weights</li>
+      </ul>
+      <p style="font-size:8.6pt;margin:0;color:var(--muted);">Read-only copy exposed to the CSV export screen via a Provider.</p>
+    </div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 700 250" role="img" aria-label="Storage entity diagram">
+      <defs><style>.e{fill:#fff;stroke:#2e8b6b;stroke-width:1.2;}.eh{fill:#15503a;}.ehl{font:700 10px 'Segoe UI';fill:#fff;}.f{font:9px 'Segoe UI';fill:#1e2a24;}.k{font:700 9px 'Segoe UI';fill:#15503a;}</style></defs>
+      <!-- SharedPreferences group -->
+      <text class="k" x="20" y="18">SharedPreferences  (key → value)</text>
+      <rect class="e" x="20" y="26" width="150" height="96" rx="7"/><rect class="eh" x="20" y="26" width="150" height="20" rx="7"/><text class="ehl" x="28" y="40">UserProfile</text>
+      <text class="f" x="28" y="60">name, age, sex</text><text class="f" x="28" y="76">bloodGroup, ht/wt</text><text class="f" x="28" y="92">conditions[]</text><text class="f" x="28" y="108">emergencyContact</text>
+      <rect class="e" x="185" y="26" width="150" height="96" rx="7"/><rect class="eh" x="185" y="26" width="150" height="20" rx="7"/><text class="ehl" x="193" y="40">Baseline</text>
+      <text class="f" x="193" y="60">normal HR / SpO₂</text><text class="f" x="193" y="76">normal temp</text><text class="f" x="193" y="92">sleep goal</text><text class="f" x="193" y="108">readingsLearned</text>
+      <rect class="e" x="350" y="26" width="150" height="96" rx="7"/><rect class="eh" x="350" y="26" width="150" height="20" rx="7"/><text class="ehl" x="358" y="40">DailySummary ×90</text>
+      <text class="f" x="358" y="60">date</text><text class="f" x="358" y="76">avg/peak HR, minSpO₂</text><text class="f" x="358" y="92">peak temp, risk</text><text class="f" x="358" y="108">steps, alerts</text>
+
+      <!-- sembast group -->
+      <text class="k" x="20" y="152">sembast · prana_ml.db</text>
+      <rect class="e" x="20" y="160" width="220" height="80" rx="7"/><rect class="eh" x="20" y="160" width="220" height="20" rx="7"/><text class="ehl" x="28" y="174">VitalsSample (calm)</text>
+      <text class="f" x="28" y="196">timestamp</text><text class="f" x="28" y="212">featureVector[16]  (frozen schema)</text><text class="f" x="28" y="228">→ used to train personalization</text>
+      <rect class="e" x="255" y="160" width="245" height="80" rx="7"/><rect class="eh" x="255" y="160" width="245" height="20" rx="7"/><text class="ehl" x="263" y="174">PersonalModel + Autoencoder</text>
+      <text class="f" x="263" y="196">Welford mean/variance per feature</text><text class="f" x="263" y="212">autoencoder weights (16-8-4-8-16)</text><text class="f" x="263" y="228">persisted &amp; reloaded on launch</text>
+
+      <line x1="130" y1="240" x2="360" y2="212" stroke="#9a6a12" stroke-width="1.1" stroke-dasharray="4 3"/>
+      <text x="150" y="250" style="font:8px 'Segoe UI';" fill="#9a6a12">calm samples feed the model</text>
+
+      <!-- inert -->
+      <rect x="520" y="26" width="160" height="214" rx="8" fill="#fbeae8" stroke="#eec7c3"/>
+      <text x="600" y="44" text-anchor="middle" style="font:700 9px 'Segoe UI';" fill="#a3342f">SCAFFOLDED · INERT</text>
+      <text x="600" y="66" text-anchor="middle" style="font:8.5px 'Segoe UI';" fill="#a3342f">drift / sqlite3</text>
+      <text x="600" y="82" text-anchor="middle" style="font:8.5px 'Segoe UI';" fill="#a3342f">sqlcipher_flutter_libs</text>
+      <text x="600" y="98" text-anchor="middle" style="font:8.5px 'Segoe UI';" fill="#a3342f">flutter_secure_storage</text>
+      <text x="600" y="122" text-anchor="middle" style="font:8px 'Segoe UI';" fill="#a3342f">DatabaseKeyManager</text>
+      <text x="600" y="138" text-anchor="middle" style="font:8px 'Segoe UI';" fill="#a3342f">(never called)</text>
+      <text x="600" y="170" text-anchor="middle" style="font:8px 'Segoe UI';" fill="#a3342f">No encrypted DB is</text>
+      <text x="600" y="184" text-anchor="middle" style="font:8px 'Segoe UI';" fill="#a3342f">wired in today.</text>
+    </svg>
+    <figcaption>Two live stores (green) plus the scaffolded-but-inactive encrypted stack (red). There is no relational schema; both stores are document/key-value.</figcaption>
+  </figure>
+
+  <div class="callout c-warn"><span class="lab">Say this, not that</span>
+  ✔ "Data is stored locally in SharedPreferences and a sembast NoSQL database." &nbsp; ✘ "We use an encrypted SQLCipher database." (The SQLCipher stack is present in <span class="mono">pubspec.yaml</span> but <b>not wired in</b>; storage is currently plaintext — see §11 &amp; §25.)</div>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">local_storage_service.dart · vitals_sample_store.dart · database_key_manager.dart (orphaned) · app_constants.dart (dailySummaryRetentionDays=90)</span></div>
+</div>
+
+<!-- ============================ 9. ML / AI ============================ -->
+<div class="wrap sec sec-break" id="s9">
+  <div class="sec-head"><div class="sec-num">9</div><div><div class="sec-kick">Most important section</div><div class="sec-title">ML / AI Deep Dive</div></div></div>
+
+  <p class="lead">This is the section judges probe hardest, so it is the section you must know cold. The golden rule: <b>describe each layer as exactly what it is</b> — real learning where it is real, transparent heuristics where they are heuristics, and dormant where a file ships but never runs.</p>
+
+  <h3 class="sub">The four kinds of "AI" in this app — kept honestly separate</h3>
+  <table class="z">
+    <tr><th style="width:20%">Category</th><th style="width:34%">What it is here</th><th>Where</th></tr>
+    <tr><td><b>Real, on-device ML</b> <span class="tag-ok">✔</span></td><td>(a) A per-person <b>running-statistics baseline</b> (Welford mean/variance) with a <b>Mahalanobis distance</b> anomaly score. (b) A small <b>autoencoder neural network</b> (16-8-4-8-16) <b>trained on the device itself</b> by SGD/back-prop in a background isolate; reconstruction error = "unusual for you."</td><td><span class="fp">personal_model.dart</span>, <span class="fp">autoencoder.dart</span></td></tr>
+    <tr><td><b>Rule-based / heuristic</b> <span class="tag-part">◐</span></td><td>Five hand-tuned logistic-style formulas (sigmoids) for heat-stress, respiratory, cardiovascular, fatigue and overall risk over the 16-feature vector. Coefficients come from <b>published physiological thresholds</b>, <b>not</b> fitted to a dataset.</td><td><span class="fp">mock_inference_service.dart</span></td></tr>
+    <tr><td><b>API-based AI</b> <span class="tag-no">✘</span></td><td><b>None.</b> No OpenAI / Gemini / cloud model. Not found in the current codebase.</td><td>—</td></tr>
+    <tr><td><b>Mock / dormant</b> <span class="tag-no">✘</span></td><td>Two <code>.tflite</code> files ship. One (<code>prana_autoencoder_best.tflite</code>, ~7.4&nbsp;KB) is a genuine offline-trained model but is <b>never loaded</b>. The other (<code>prana_risk_model.tflite</code>, 92&nbsp;bytes) is placeholder text. The TFLite service that would load them is <b>never instantiated</b>.</td><td><span class="fp">assets/models/*.tflite</span>, <span class="fp">tflite_inference_service.dart</span> (dead)</td></tr>
+  </table>
+
+  <h3 class="sub">What actually runs at inference time (the live path)</h3>
+  <div class="callout c-tech"><span class="lab">Technically — the wiring, verified</span>
+  At startup, <span class="fp">main.dart</span> constructs a <span class="fp">PersonalizedInferenceService</span> that <em>wraps</em> a <span class="fp">MockInferenceService</span>, and injects it into the controller via the <code>customMlService</code> parameter. The controller uses <code>customMlService ?? MockInferenceService()</code> — so with the injection present, <b>PersonalizedInferenceService is the live inference engine.</b> For each 16-feature vector it produces: (1) the five domain probabilities straight from the heuristic <code>MockInferenceService</code> (unchanged, transparent), and (2) a <b>personalized overall-anomaly</b> signal that blends the Mahalanobis distance from the <code>PersonalModel</code> and the autoencoder's reconstruction error, with hard physiological floors so a genuinely dangerous reading can't be "learned away" as normal.</div>
+
+  <figure>
+    <svg viewBox="0 0 700 250" role="img" aria-label="Inference pipeline">
+      <defs><marker id="ar3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#15503a"/></marker>
+      <style>.n{fill:#eaf3ee;stroke:#2e8b6b;stroke-width:1.1;}.nr{fill:#fbeae8;stroke:#eec7c3;stroke-width:1.1;}.nt{font:9px 'Segoe UI';fill:#1e2a24;}.nh{font:700 9px 'Segoe UI';fill:#15503a;}.ln{stroke:#15503a;stroke-width:1.2;fill:none;}</style></defs>
+      <rect class="n" x="10" y="95" width="96" height="46" rx="7"/><text class="nh" x="58" y="114" text-anchor="middle">16-feature</text><text class="nt" x="58" y="128" text-anchor="middle">vector</text>
+      <line class="ln" x1="106" y1="118" x2="140" y2="118" marker-end="url(#ar3)"/>
+      <rect class="n" x="142" y="30" width="150" height="44" rx="7"/><text class="nh" x="217" y="48" text-anchor="middle">MockInferenceService</text><text class="nt" x="217" y="63" text-anchor="middle">5 heuristic sigmoids</text>
+      <rect class="n" x="142" y="88" width="150" height="44" rx="7"/><text class="nh" x="217" y="106" text-anchor="middle">PersonalModel</text><text class="nt" x="217" y="121" text-anchor="middle">Welford + Mahalanobis</text>
+      <rect class="n" x="142" y="146" width="150" height="44" rx="7"/><text class="nh" x="217" y="164" text-anchor="middle">Autoencoder</text><text class="nt" x="217" y="179" text-anchor="middle">recon-error (on-device)</text>
+      <line class="ln" x1="106" y1="118" x2="140" y2="52" marker-end="url(#ar3)"/>
+      <line class="ln" x1="106" y1="118" x2="140" y2="168" marker-end="url(#ar3)"/>
+      <rect x="330" y="80" width="170" height="72" rx="8" fill="#15503a"/><text x="415" y="104" text-anchor="middle" style="font:700 10px 'Segoe UI';" fill="#fff">PersonalizedInference</text><text x="415" y="122" text-anchor="middle" style="font:9px 'Segoe UI';" fill="#bfe9d5">domain risks + blended</text><text x="415" y="136" text-anchor="middle" style="font:9px 'Segoe UI';" fill="#bfe9d5">anomaly + safety floors</text>
+      <line class="ln" x1="292" y1="52" x2="330" y2="96" marker-end="url(#ar3)"/>
+      <line class="ln" x1="292" y1="110" x2="330" y2="112" marker-end="url(#ar3)"/>
+      <line class="ln" x1="292" y1="168" x2="330" y2="130" marker-end="url(#ar3)"/>
+      <line class="ln" x1="500" y1="116" x2="536" y2="116" marker-end="url(#ar3)"/>
+      <rect class="n" x="538" y="92" width="150" height="48" rx="7"/><text class="nh" x="613" y="112" text-anchor="middle">Risk Engine</text><text class="nt" x="613" y="127" text-anchor="middle">→ 0–100 + drivers</text>
+      <!-- dormant -->
+      <rect class="nr" x="330" y="176" width="358" height="40" rx="7"/><text x="509" y="193" text-anchor="middle" style="font:700 8.5px 'Segoe UI';" fill="#a3342f">DORMANT: prana_autoencoder_best.tflite · prana_risk_model.tflite</text><text x="509" y="207" text-anchor="middle" style="font:8px 'Segoe UI';" fill="#a3342f">TFLiteInferenceService never instantiated — not in the live path</text>
+    </svg>
+    <figcaption>Live inference (green) vs. shipped-but-unused TFLite (red). Verified in <span class="mono">main.dart:30–42</span>, <span class="mono">personalized_inference_service.dart</span>, <span class="mono">prana_health_controller.dart:170–174</span>.</figcaption>
+  </figure>
+
+  <h3 class="sub">The 16-feature vector (frozen schema v1.1.0)</h3>
+  <p style="font-size:9.2pt;">Every model consumes the same fixed vector, defined once in <span class="fp">feature_schema.dart</span> and computed in <span class="fp">feature_processor.dart</span>. Freezing the schema means an exported CSV can be de-normalized back to real units exactly — the export is self-verifying. It carries absolute vitals (HR, SpO₂, temp), baseline-relative deviations (e.g. HR % deviation), an HR trend (an OLS slope from <span class="fp">hr_trend_calculator.dart</span>), environmental terms (heat index, AQI, humidity) and a categorical activity level.</p>
+
+  <div class="callout c-red"><span class="lab">The three things you must NOT claim about the ML</span>
+  ✘ "It uses a trained neural network for the risk score." → The <em>risk</em> comes from heuristics; the trained autoencoder contributes only a personalized <em>anomaly</em> signal, and the shipped <code>.tflite</code> is unused. &nbsp; ✘ "It's 90-something-percent accurate." → There are <b>no</b> accuracy/precision/recall metrics; the on-screen confidence (~0.92) is a <b>fixed placeholder</b>. &nbsp; ✘ "It diagnoses conditions." → It is a wellness/early-warning aid, explicitly not a diagnostic device (the PDF report says so).</div>
+
+  <div class="callout c-plain"><span class="lab">The one-paragraph honest ML pitch (memorize this)</span>
+  "PRANA does real machine learning <em>on the device</em>: it learns each person's normal with running statistics and a small autoencoder trained on the phone itself, so it can flag what's unusual <em>for you</em> — completely offline. On top of that, the specific risk scores come from transparent, physiology-based formulas we can explain line by line, rather than an opaque black box. We also ship a separately-trained TensorFlow-Lite model, but I'll be upfront: it isn't wired into the live path yet, and we don't claim accuracy numbers we haven't measured."</div>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">feature_schema.dart · feature_processor.dart · mock_inference_service.dart:51–96 · personalized_inference_service.dart:71–139 · personal_model.dart:41–68 · autoencoder.dart:18–405 · tflite_inference_service.dart (dead)</span></div>
+</div>
+
+<!-- ============================ 10. AI VIA API ============================ -->
+<div class="wrap sec sec-break" id="s10">
+  <div class="sec-head"><div class="sec-num">10</div><div><div class="sec-kick">If AI came from a service</div><div class="sec-title">AI-via-API Analysis</div></div></div>
+  <div class="callout c-red"><span class="lab">Not found in the current codebase</span>
+  PRANA calls <b>no external AI or ML API</b>. There is no OpenAI, Anthropic, Google Gemini, Hugging Face, or any cloud-inference client; no API keys, no model endpoints, no HTTP calls for inference. All intelligence runs on-device (see §9).</div>
+  <div class="callout c-plain"><span class="lab">Why this is a strength, not a gap</span>
+  Because nothing is sent to a third-party AI service, PRANA keeps working with no internet, incurs no per-request cost, adds no network latency, and never exposes health data to an outside provider. For a disaster/rural-resilience product, "no API dependency" is a feature to lead with, not apologise for.</div>
+  <div class="callout c-tech"><span class="lab">If you were asked to add one later</span>
+  The clean insertion point is the <code>MlInferenceService</code> abstraction that <span class="fp">PersonalizedInferenceService</span> and <span class="fp">MockInferenceService</span> already implement — a future cloud service could implement the same interface and be swapped in behind a connectivity check, without touching the controller. Today, that is design headroom, not a shipped feature.</div>
+</div>
+
+<!-- ============================ 11. SECURITY ============================ -->
+<div class="wrap sec" id="s11">
+  <div class="sec-head"><div class="sec-num">11</div><div><div class="sec-kick">How safe is the data</div><div class="sec-title">Security</div></div></div>
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  The strongest privacy protection PRANA has is that data <b>never leaves the phone</b> — there's no account, no server, nothing to breach remotely. The weaker spot is that the data saved on the phone is <b>not encrypted</b> yet, so anyone with full access to an unlocked device could read the app's stored files.</div>
+  <table class="z">
+    <tr><th style="width:34%">Aspect</th><th style="width:14%">Status</th><th>Detail (verified)</th></tr>
+    <tr><td>Data leaves the device?</td><td><span class="tag-ok">Never*</span></td><td>No network client for app data. *Only an emergency SMS/call goes out, over cellular.</td></tr>
+    <tr><td>Encryption at rest</td><td><span class="tag-no">None</span></td><td>SharedPreferences + sembast are plaintext; SQLCipher stack scaffolded but inert</td></tr>
+    <tr><td>Encryption in transit</td><td><span class="tag-ok">N/A</span></td><td>Nothing transmitted (SMS is inherently unencrypted by design of SMS)</td></tr>
+    <tr><td>User authentication</td><td><span class="tag-ok">N/A</span></td><td>Single-user, on-device; no login by design</td></tr>
+    <tr><td>Permissions requested</td><td><span class="tag-part">Scoped</span></td><td>BLE, location (needed for BLE scan), SEND_SMS, CALL_PHONE — each tied to a real feature</td></tr>
+    <tr><td>Secrets / API keys</td><td><span class="tag-ok">None</span></td><td>No secrets in the repo (nothing to leak)</td></tr>
+    <tr><td>Release signing</td><td><span class="tag-no">Debug key</span></td><td>Release build uses the debug keystore; no production key configured</td></tr>
+    <tr><td>User data control</td><td><span class="tag-ok">Yes</span></td><td>Privacy screen shows real counts and can export/erase local data</td></tr>
+  </table>
+  <div class="callout c-warn"><span class="lab">Honest framing for judges</span>
+  "Our threat model is 'a lost or shared phone.' We win on the network dimension — there is literally no server to attack and no data in transit. We're candid that encryption-at-rest isn't wired in yet: the SQLCipher + secure-storage scaffolding is in place, and turning it on is the top security item on our roadmap (§26)."</div>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">AndroidManifest.xml (permissions) · build.gradle.kts:37–41 (debug signing) · database_key_manager.dart (inert) · privacy_service.dart</span></div>
+</div>
+
+<!-- ============================ 12. ERROR HANDLING ============================ -->
+<div class="wrap sec sec-break" id="s12">
+  <div class="sec-head"><div class="sec-num">12</div><div><div class="sec-kick">When things go wrong</div><div class="sec-title">Error Handling</div></div></div>
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  The app is built to <b>degrade gracefully</b>: if a sensor packet is garbled it's ignored, if GPS isn't available it says so instead of faking a location, and if a permission is denied the emergency flow falls back to copying the alert text so a human can still send it.</div>
+  <table class="z">
+    <tr><th style="width:34%">Failure</th><th>How it's handled (verified)</th></tr>
+    <tr><td>Malformed sensor packet</td><td><span class="fp">SensorParser</span> returns <code>null</code> on invalid JSON (unit-tested); the reading is skipped, no crash</td></tr>
+    <tr><td>Missing sensor fields</td><td>Parser only emits streams for keys actually present — no invented default values</td></tr>
+    <tr><td>No GPS fix</td><td>Emergency reports "Location unavailable" rather than a fake coordinate (unit-tested)</td></tr>
+    <tr><td>Emergency permission denied / non-Android</td><td>Native dispatch degrades to clipboard copy of the alert; the flow still completes</td></tr>
+    <tr><td>PDF/CSV share fails</td><td><span class="fp">FileSharer</span> returns <code>false</code> instead of throwing; UI can inform the user</td></tr>
+    <tr><td>No saved ML model on first run</td><td>Falls back to <code>PersonalModel.fresh()</code> and starts learning from scratch</td></tr>
+    <tr><td>No band / no live data</td><td>Screens render explicit empty-states ("No conditions yet", "Connect device") rather than blank crashes</td></tr>
+  </table>
+  <div class="callout c-warn"><span class="lab">Candid gap</span>
+  Error handling is feature-local (guards, null-returns, fallbacks) rather than a global crash-reporting/telemetry layer — there is no Sentry/Crashlytics-style reporter (by design, since the app is offline). Worth stating plainly if asked.</div>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">sensor_parser.dart (+ test) · emergency_service.dart (+ test) · report_service.dart (FileSharer) · main.dart (PersonalModel.fresh fallback)</span></div>
+</div>
+
+<!-- ============================ 13. OFFLINE / ONLINE ============================ -->
+<div class="wrap sec" id="s13">
+  <div class="sec-head"><div class="sec-num">13</div><div><div class="sec-kick">What needs a signal</div><div class="sec-title">Offline vs Online</div></div></div>
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  Basically everything works offline. The only thing that touches the outside world is an emergency alert, and even that uses the phone network (SMS/call), not the internet.</div>
+  <table class="z">
+    <tr><th style="width:40%">Capability</th><th style="width:18%">Needs internet?</th><th>Path</th></tr>
+    <tr><td>Vitals &amp; environment monitoring</td><td><span class="tag-ok">No</span></td><td>Bluetooth to the band</td></tr>
+    <tr><td>Risk scoring &amp; recommendations</td><td><span class="tag-ok">No</span></td><td>On-device compute</td></tr>
+    <tr><td>ML personalization &amp; training</td><td><span class="tag-ok">No</span></td><td>On-device (background isolate)</td></tr>
+    <tr><td>Storage / history / privacy</td><td><span class="tag-ok">No</span></td><td>SharedPreferences + sembast</td></tr>
+    <tr><td>PDF report &amp; CSV export</td><td><span class="tag-ok">No</span></td><td>Generated locally; shared via file provider</td></tr>
+    <tr><td>Emergency SMS + call</td><td><span class="tag-part">No internet</span></td><td>Cellular network (SMS/telephony)</td></tr>
+    <tr><td>Any cloud sync / accounts</td><td><span class="tag-no">—</span></td><td>Not implemented (none exists)</td></tr>
+  </table>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">Whole codebase: no HTTP/Dio/network client for app data; emergency_dispatcher.dart uses the native channel only</span></div>
+</div>
+
+<!-- ============================ 14. PERFORMANCE ============================ -->
+<div class="wrap sec sec-break" id="s14">
+  <div class="sec-head"><div class="sec-num">14</div><div><div class="sec-kick">Does it stay smooth</div><div class="sec-title">Performance</div></div></div>
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  The heavy work (learning the model) is pushed off the screen's thread so the UI never stutters, screens keep their state when you switch tabs, and the app only keeps a short rolling window of recent points in memory rather than everything.</div>
+  <ul>
+    <li><b>Isolate for training.</b> Autoencoder training runs in a Flutter <code>compute()</code> isolate — off the UI thread, so scrolling stays smooth during learning.</li>
+    <li><b>Targeted repaints.</b> Two <code>ValueNotifier</code>s (the 10&nbsp;Hz motion trace and ML status) update only their widgets via <code>ValueListenableBuilder</code>, avoiding full-tree rebuilds.</li>
+    <li><b>State preservation.</b> The five main tabs live in an <code>IndexedStack</code>, so switching tabs doesn't rebuild or lose scroll position.</li>
+    <li><b>Bounded memory.</b> In-memory history buffers are capped (roughly 50–150 recent points); only daily rollups persist long-term.</li>
+    <li><b>Light inference.</b> The live inference is small-matrix arithmetic + a tiny neural net — cheap enough to run every ~2&nbsp;s tick.</li>
+  </ul>
+  <div class="callout c-warn"><span class="lab">Not measured</span>
+  There are <b>no formal benchmarks</b> (frame timings, memory profiles, battery draw) in the repo. Claims above are architectural, not measured — say "designed for" rather than citing numbers you don't have.</div>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">autoencoder.dart (compute isolate) · prana_health_controller.dart (motionTick ValueNotifier ~:105) · app.dart (IndexedStack)</span></div>
+</div>
+
+<!-- ============================ 15. SCALABILITY ============================ -->
+<div class="wrap sec" id="s15">
+  <div class="sec-head"><div class="sec-num">15</div><div><div class="sec-kick">Can it grow</div><div class="sec-title">Scalability</div></div></div>
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  Because there's no server, PRANA "scales" trivially in one sense — every phone is fully self-contained, so a million users cost you no servers. What it does <b>not</b> do today is combine data across users or give an authority a fleet-wide view.</div>
+  <div class="grid2">
+    <div class="card"><h4>Scales naturally</h4><ul class="tight" style="font-size:9pt;"><li>Zero server cost — compute is on each device</li><li>No shared bottleneck, no rate limits</li><li>Works the same for 1 or 1,000,000 users</li><li>Privacy scales with it (nothing centralized)</li></ul></div>
+    <div class="card"><h4>Doesn't scale (by design, today)</h4><ul class="tight" style="font-size:9pt;"><li>No cross-user aggregation / population dashboards</li><li>No multi-device sync per user</li><li>No central fleet management for authorities</li><li>Model learns per-device only (no federated pooling)</li></ul></div>
+  </div>
+  <div class="callout c-tech"><span class="lab">Growth path</span>
+  Adding an <em>optional</em> sync/aggregation tier later doesn't require re-architecting: the controller already produces clean <code>DailySummary</code> objects and the export layer already serializes readings — those are natural upload units for a future opt-in backend (§26).</div>
+</div>
+
+<!-- ============================ 16. DEPLOYMENT READINESS ============================ -->
+<div class="wrap sec sec-break" id="s16">
+  <div class="sec-head"><div class="sec-num">16</div><div><div class="sec-kick">Ready to ship?</div><div class="sec-title">Deployment Readiness</div></div></div>
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  As a working prototype for judging, it's in good shape: it builds, runs on a real phone, and the headline features work. As a store-ready product, a few production chores remain — mainly proper app signing, a real app ID, encryption, and a background service for locked-screen reliability.</div>
+  <table class="z">
+    <tr><th style="width:6%">&nbsp;</th><th style="width:36%">Item</th><th>Status</th></tr>
+    <tr><td>✅</td><td>Compiles &amp; runs on a real Android device</td><td>Analyzer clean; runs on-device</td></tr>
+    <tr><td>✅</td><td>Core features functional</td><td>Vitals, risk, recommendations, history, report, export</td></tr>
+    <tr><td>✅</td><td>Real emergency dispatch</td><td>Native SMS + call + GPS via <code>prana/emergency</code></td></tr>
+    <tr><td>✅</td><td>On-device ML personalization</td><td>Baseline + autoencoder train/persist on device</td></tr>
+    <tr><td>✅</td><td>Unit tests for core logic</td><td>6 files, ~18 cases (§24)</td></tr>
+    <tr><td>⚠️</td><td>Release signing</td><td>Debug-signed; no production keystore/<code>key.properties</code></td></tr>
+    <tr><td>⚠️</td><td>Application ID</td><td>Still <code>com.example.sih_test_app_new</code> (template default; in-file TODO)</td></tr>
+    <tr><td>⚠️</td><td>Locked-screen fall reliability</td><td>No foreground/background service declared</td></tr>
+    <tr><td>❌</td><td>Encryption at rest</td><td>Scaffolded, not wired in</td></tr>
+    <tr><td>❌</td><td>Widget / integration tests</td><td>Only unit tests exist</td></tr>
+    <tr><td>❌</td><td>iOS native emergency/file channels</td><td>Android-only implementation</td></tr>
+    <tr><td>❌</td><td>Product README</td><td>Repo README is stock Flutter boilerplate</td></tr>
+  </table>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">build.gradle.kts:8–41 · AndroidManifest.xml (no service/receiver) · README.md (boilerplate) · test/</span></div>
+</div>
+
+<!-- ============================ 17. DEPLOYMENT ARCHITECTURE ============================ -->
+<div class="wrap sec" id="s17">
+  <div class="sec-head"><div class="sec-num">17</div><div><div class="sec-kick">What actually gets installed</div><div class="sec-title">Deployment Architecture</div></div></div>
+  <figure>
+    <svg viewBox="0 0 700 250" role="img" aria-label="Deployment diagram">
+      <defs><marker id="ar4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2e8b6b"/></marker>
+      <style>.d{fill:#eaf3ee;stroke:#2e8b6b;stroke-width:1.1;}.dt{font:9px 'Segoe UI';fill:#1e2a24;}.dh{font:700 9.5px 'Segoe UI';fill:#15503a;}</style></defs>
+      <!-- band -->
+      <rect class="d" x="12" y="90" width="120" height="70" rx="10"/><text class="dh" x="72" y="112" text-anchor="middle">Wearable band</text><text class="dt" x="72" y="130" text-anchor="middle">HR·SpO₂·temp</text><text class="dt" x="72" y="144" text-anchor="middle">IMU·env sensors</text>
+      <text x="150" y="118" style="font:8px 'Segoe UI';" fill="#2e8b6b" text-anchor="middle">BLE</text>
+      <line x1="132" y1="125" x2="188" y2="125" stroke="#2e8b6b" stroke-width="1.3" marker-end="url(#ar4)"/>
+      <!-- phone -->
+      <rect x="190" y="20" width="330" height="212" rx="14" fill="#f3f8f5" stroke="#15503a" stroke-width="1.4"/>
+      <text class="dh" x="355" y="40" text-anchor="middle">Android phone — single APK (no server)</text>
+      <rect class="d" x="206" y="52" width="298" height="60" rx="9"/><text class="dh" x="355" y="72" text-anchor="middle">Flutter engine + Dart app</text><text class="dt" x="355" y="90" text-anchor="middle">UI · controller · services · ML · SharedPreferences · sembast</text>
+      <rect x="206" y="120" width="298" height="52" rx="9" fill="#15503a"/><text x="355" y="140" text-anchor="middle" style="font:700 9.5px 'Segoe UI';" fill="#fff">Native MainActivity.kt</text><text x="355" y="157" text-anchor="middle" style="font:9px 'Segoe UI';" fill="#bfe9d5">prana/emergency · prana/files (MethodChannels)</text>
+      <rect class="d" x="206" y="180" width="298" height="42" rx="9"/><text class="dt" x="355" y="199" text-anchor="middle">Android OS services:</text><text class="dt" x="355" y="213" text-anchor="middle">SmsManager · Telephony · LocationManager · FileProvider</text>
+      <!-- outbound -->
+      <line x1="520" y1="150" x2="576" y2="150" stroke="#2e8b6b" stroke-width="1.3" marker-end="url(#ar4)"/>
+      <rect class="d" x="578" y="120" width="110" height="60" rx="10"/><text class="dh" x="633" y="142" text-anchor="middle">Emergency</text><text class="dt" x="633" y="159" text-anchor="middle">contact via</text><text class="dt" x="633" y="172" text-anchor="middle">SMS + call</text>
+      <!-- no cloud -->
+      <rect x="578" y="26" width="110" height="66" rx="10" fill="#fbeae8" stroke="#eec7c3"/><text x="633" y="52" text-anchor="middle" style="font:700 9px 'Segoe UI';" fill="#a3342f">No cloud</text><text x="633" y="70" text-anchor="middle" style="font:8px 'Segoe UI';" fill="#a3342f">No backend</text><text x="633" y="83" text-anchor="middle" style="font:8px 'Segoe UI';" fill="#a3342f">No accounts</text>
+    </svg>
+    <figcaption>The entire product is one Android APK on the user's phone, talking to a BLE band and — only in an emergency — to a contact over the cellular network. There is no server tier.</figcaption>
+  </figure>
+  <p style="font-size:9.2pt;"><b>Build facts:</b> <code>compileSdk 37</code> (pinned above Flutter's default because the secure-storage lib requires it), Java/Kotlin <b>17</b>, <code>minSdk</code>/<code>targetSdk</code>/<code>versionCode</code>/<code>versionName</code> inherited from Flutter defaults / <span class="fp">pubspec.yaml</span> (<code>1.0.0+1</code>). Root Gradle only redirects the build dir; repos are <code>google()</code> + <code>mavenCentral()</code>.</p>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">android/app/build.gradle.kts · android/build.gradle.kts · MainActivity.kt · AndroidManifest.xml</span></div>
+</div>
+
+<!-- ============================ 18. ALTERNATIVES ============================ -->
+<div class="wrap sec sec-break" id="s18">
+  <div class="sec-head"><div class="sec-num">18</div><div><div class="sec-kick">Roads not taken</div><div class="sec-title">Alternatives &amp; Why Not</div></div></div>
+  <table class="z">
+    <tr><th style="width:26%">Decision</th><th style="width:30%">Alternative considered</th><th>Why the current choice</th></tr>
+    <tr><td>On-device inference</td><td>Cloud ML API</td><td>Must work offline (disaster/rural); privacy; zero latency &amp; cost. Cloud would break the core promise.</td></tr>
+    <tr><td>Heuristics + on-device learning for risk</td><td>A single supervised trained model</td><td>No labelled clinical dataset available; heuristics are explainable and safe, and the shipped TFLite model wasn't reliable enough to wire in.</td></tr>
+    <tr><td>SharedPreferences + sembast</td><td>Encrypted SQLCipher via drift</td><td>Simpler, pure-Dart, fewer moving parts for a prototype; the encrypted stack is scaffolded for later rather than blocking the demo.</td></tr>
+    <tr><td>Own native MethodChannels</td><td>Third-party Flutter plugins (telephony, geolocator, share_plus)</td><td>Avoids AGP-9 / Gradle fragility that broke plugin builds; keeps the native surface small and controlled.</td></tr>
+    <tr><td>Single ChangeNotifier controller</td><td>BLoC / Riverpod / Redux</td><td>Fastest to reason about for a prototype; one source of truth. (Trade-off: the controller is large — §25.)</td></tr>
+    <tr><td>Flutter (Android)</td><td>Native Kotlin, or React Native</td><td>One codebase, fast iteration, rich charting; native only where unavoidable (emergency/files).</td></tr>
+  </table>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">pubspec.yaml comments (pure-Dart rationale) · prana_health_controller.dart:170–174 (TFLite replaced) · MainActivity.kt (own channels)</span></div>
+</div>
+
+<!-- ============================ 19. DECISION LOG ============================ -->
+<div class="wrap sec" id="s19">
+  <div class="sec-head"><div class="sec-num">19</div><div><div class="sec-kick">Why it's built this way</div><div class="sec-title">Technical Decision Log</div></div></div>
+  <ol>
+    <li><b>Offline-first, on-device.</b> The product exists for moments with no connectivity; privacy is a bonus. Everything else follows from this.</li>
+    <li><b>Transparent risk over black-box.</b> Physiology-based formulas can be explained and defended; important for a health-adjacent tool without clinical validation.</li>
+    <li><b>Real per-person learning.</b> Running-stats baseline + on-device autoencoder so "abnormal" means "abnormal for you," not a generic threshold.</li>
+    <li><b>Uncapped 0–100 risk.</b> An earlier demo cap was removed so the score reflects the true computed severity, not a flattering ceiling.</li>
+    <li><b>Frozen feature schema (v1.1.0).</b> Guarantees reproducibility and lets the CSV export be de-normalized back to real units exactly.</li>
+    <li><b>Own native channels, no new plugins.</b> Deliberate response to build-toolchain fragility; keeps the native footprint auditable.</li>
+    <li><b>Two simple stores now, encryption later.</b> Ship a working prototype; leave the encrypted-DB scaffolding in place as a clearly-marked next step.</li>
+  </ol>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">app_constants.dart · feature_schema.dart (v1.1.0) · risk_engine.dart · project memory (risk-score-uncapped, no-new-native-plugins)</span></div>
+</div>
+
+<!-- ============================ 20. FILE MAP ============================ -->
+<div class="wrap sec sec-break" id="s20">
+  <div class="sec-head"><div class="sec-num">20</div><div><div class="sec-kick">Where to find things</div><div class="sec-title">File-by-File Codebase Map</div></div></div>
+  <p style="font-size:9.2pt;">The app lives under <span class="fp">lib/</span>, organized as <span class="fp">core/</span> (cross-cutting), <span class="fp">features/</span> (one folder per screen/domain), and <span class="fp">shared/</span> (widgets/models). Highest-value files:</p>
+  <table class="small z">
+    <tr><th style="width:40%">File</th><th>What it does</th></tr>
+    <tr><td>lib/main.dart</td><td>Bootstrap: init storage, build the ML pipeline, inject it, run the app</td></tr>
+    <tr><td>lib/app/app.dart</td><td>MaterialApp, splash→shell routing, the 5-tab navigation shell, header SOS wiring</td></tr>
+    <tr><td>lib/app/routes.dart</td><td>Named routes for off-shell screens</td></tr>
+    <tr><td>lib/core/services/prana_health_controller.dart</td><td><b>The brain</b> — owns services, runs the per-reading pipeline, persists summaries</td></tr>
+    <tr><td>lib/core/constants/app_constants.dart</td><td>All thresholds/priors (HR/SpO₂/temp bounds, fall g-forces, retention days)</td></tr>
+    <tr><td>lib/core/services/local_storage_service.dart</td><td>SharedPreferences persistence (profile, baseline, settings, daily summaries)</td></tr>
+    <tr><td>lib/features/ml/feature_schema.dart</td><td>Frozen v1.1.0 definition of the 16-feature vector</td></tr>
+    <tr><td>lib/features/ml/feature_processor.dart</td><td>Builds the 16-feature vector from readings</td></tr>
+    <tr><td>lib/features/ml/mock_inference_service.dart</td><td>The 5 hand-tuned physiological risk formulas</td></tr>
+    <tr><td>lib/features/ml/personalized_inference_service.dart</td><td><b>The live inference engine</b> — heuristics + personalization + safety floors</td></tr>
+    <tr><td>lib/features/ml/personal_model.dart</td><td>Welford running stats + Mahalanobis anomaly</td></tr>
+    <tr><td>lib/features/ml/autoencoder.dart</td><td>On-device-trained autoencoder (16-8-4-8-16)</td></tr>
+    <tr><td>lib/features/ml/vitals_sample_store.dart</td><td>sembast store for calm samples + persisted model</td></tr>
+    <tr><td>lib/features/ml/tflite_inference_service.dart</td><td><b>Dead code</b> — TFLite loader, never instantiated</td></tr>
+    <tr><td>lib/features/risk/risk_engine.dart</td><td>Combines inference into the 0–100 score + drivers; calls the recommender</td></tr>
+    <tr><td>lib/features/recommendations/recommendation_engine.dart</td><td>Rule cascade → specific advice</td></tr>
+    <tr><td>lib/features/devices/*sensor_data_source.dart</td><td>BLE source, mock (demo) source, and the shared interface</td></tr>
+    <tr><td>lib/features/devices/sensor_parser.dart</td><td>Parses BLE packets (custom JSON + standard GATT) into typed readings</td></tr>
+    <tr><td>lib/features/emergency/*</td><td>Fall detection, emergency state machine, native dispatcher, SOS button</td></tr>
+    <tr><td>lib/features/report/*</td><td>PDF report data + pure-Dart PDF builder + share service</td></tr>
+    <tr><td>lib/features/data_export/*</td><td>CSV export + feature-vector decoder (inverse of the processor)</td></tr>
+    <tr><td>android/.../MainActivity.kt</td><td>Native Kotlin: the two MethodChannels (emergency, files)</td></tr>
+  </table>
+</div>
+
+<!-- ============================ 21. FUNCTIONS ============================ -->
+<div class="wrap sec sec-break" id="s21">
+  <div class="sec-head"><div class="sec-num">21</div><div><div class="sec-kick">The functions that matter</div><div class="sec-title">Important Functions Explained</div></div></div>
+  <table class="small z">
+    <tr><th style="width:34%">Function</th><th>What it does (plain → precise)</th></tr>
+    <tr><td><code>main()</code><br><span class="fp">main.dart</span></td><td>Starts the app. Initializes storage, opens the vitals DB, loads or creates the personal model, wraps the heuristic service in the personalized one, and launches the widget tree with three providers.</td></tr>
+    <tr><td>controller reading pipeline<br><span class="fp">prana_health_controller.dart</span></td><td>For each incoming reading: parse → update baseline → extract features → infer → score risk → recommend → <code>notifyListeners()</code> → persist. The single place data becomes insight.</td></tr>
+    <tr><td><code>extractFeatureVector()</code><br><span class="fp">feature_processor.dart</span></td><td>Turns raw readings + baseline into the fixed 16-number vector the models consume; guaranteed finite and length-16 (unit-tested).</td></tr>
+    <tr><td><code>predict()</code><br><span class="fp">mock_inference_service.dart</span></td><td>Applies five sigmoid formulas to the vector → heat/respiratory/cardiovascular/fatigue/overall probabilities. Pure, deterministic, explainable.</td></tr>
+    <tr><td><code>predict()</code> (personalized)<br><span class="fp">personalized_inference_service.dart</span></td><td>Calls the heuristic <code>predict()</code>, then replaces/augments the overall anomaly using the Mahalanobis distance + autoencoder reconstruction error, clamped by physiological safety floors.</td></tr>
+    <tr><td><code>update()</code> / distance<br><span class="fp">personal_model.dart</span></td><td>Welford's online algorithm updates per-feature mean/variance from calm readings; Mahalanobis distance scores how far a new reading is from your normal.</td></tr>
+    <tr><td><code>train()</code> / <code>reconstruct()</code><br><span class="fp">autoencoder.dart</span></td><td>Trains a 16-8-4-8-16 net by back-prop in a background isolate; reconstruction error on new input is the "unusual for you" signal.</td></tr>
+    <tr><td><code>calculateRisk()</code><br><span class="fp">risk_engine.dart</span></td><td>Fuses domain probabilities + anomaly into the uncapped 0–100 score and level, attaches named drivers, and asks the recommender for advice.</td></tr>
+    <tr><td><code>generateRecommendations()</code><br><span class="fp">recommendation_engine.dart</span></td><td>Ordered if/else over five scenarios (heat, respiratory, cardiovascular, fatigue, mixed) → primary + secondary advice with live values interpolated.</td></tr>
+    <tr><td>fall detection<br><span class="fp">fall_detection_service.dart</span></td><td>3-stage rule on the band's IMU: explicit fall flag, or &gt;2.8&nbsp;g impact followed by &lt;0.25&nbsp;g stillness within ~2&nbsp;s → arms the emergency countdown.</td></tr>
+    <tr><td>emergency dispatch<br><span class="fp">emergency_dispatcher.dart</span></td><td>Over <code>prana/emergency</code>: gets GPS, sends an SMS (identity + vitals + Maps link) and places a call; degrades to clipboard if blocked.</td></tr>
+    <tr><td><code>buildHealthReportPdf()</code><br><span class="fp">report_pdf_builder.dart</span></td><td>Pure function → PDF bytes: patient card, baseline, period KPIs, hand-drawn trend charts, readings table, disclaimer.</td></tr>
+    <tr><td><code>buildCsv()</code><br><span class="fp">data_export_service.dart</span></td><td>RFC-4180 CSV of decoded calm readings + the raw feature vector (self-verifying export).</td></tr>
+  </table>
+</div>
+
+<!-- ============================ 22. DATA FLOW ============================ -->
+<div class="wrap sec sec-break" id="s22">
+  <div class="sec-head"><div class="sec-num">22</div><div><div class="sec-kick">Follow one reading</div><div class="sec-title">Data Flow</div></div></div>
+  <figure>
+    <svg viewBox="0 0 700 300" role="img" aria-label="End-to-end data flow">
+      <defs><marker id="ar5" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#15503a"/></marker>
+      <style>.x{fill:#eaf3ee;stroke:#2e8b6b;stroke-width:1.1;}.xr{fill:#fbeae8;stroke:#eec7c3;stroke-width:1.1;}.xb{fill:#eaf1f8;stroke:#2a5f8f;stroke-width:1.1;}.xt{font:8.6px 'Segoe UI';fill:#1e2a24;}.xh{font:700 8.8px 'Segoe UI';fill:#15503a;}.lx{stroke:#15503a;stroke-width:1.2;fill:none;}</style></defs>
+      <rect class="x" x="8" y="120" width="86" height="44" rx="7"/><text class="xh" x="51" y="138" text-anchor="middle">Band / Mock</text><text class="xt" x="51" y="152" text-anchor="middle">BLE packet</text>
+      <line class="lx" x1="94" y1="142" x2="118" y2="142" marker-end="url(#ar5)"/>
+      <rect class="x" x="120" y="120" width="80" height="44" rx="7"/><text class="xh" x="160" y="138" text-anchor="middle">Parser</text><text class="xt" x="160" y="152" text-anchor="middle">→ readings</text>
+      <line class="lx" x1="200" y1="142" x2="224" y2="142" marker-end="url(#ar5)"/>
+      <rect class="x" x="226" y="120" width="92" height="44" rx="7"/><text class="xh" x="272" y="138" text-anchor="middle">Feature</text><text class="xt" x="272" y="152" text-anchor="middle">vector[16]</text>
+      <line class="lx" x1="318" y1="142" x2="342" y2="142" marker-end="url(#ar5)"/>
+      <rect class="x" x="344" y="112" width="120" height="60" rx="7"/><text class="xh" x="404" y="132" text-anchor="middle">Personalized</text><text class="xt" x="404" y="147" text-anchor="middle">inference</text><text class="xt" x="404" y="160" text-anchor="middle">(heur.+ML+floor)</text>
+      <line class="lx" x1="464" y1="142" x2="488" y2="142" marker-end="url(#ar5)"/>
+      <rect class="x" x="490" y="112" width="96" height="60" rx="7"/><text class="xh" x="538" y="132" text-anchor="middle">Risk +</text><text class="xt" x="538" y="147" text-anchor="middle">Recommend</text><text class="xt" x="538" y="160" text-anchor="middle">0–100</text>
+      <line class="lx" x1="586" y1="142" x2="610" y2="142" marker-end="url(#ar5)"/>
+      <rect class="xb" x="612" y="120" width="80" height="44" rx="7"/><text class="xh" x="652" y="138" text-anchor="middle" fill="#2a5f8f">UI</text><text class="xt" x="652" y="152" text-anchor="middle">repaint</text>
+      <!-- persistence branches -->
+      <line class="lx" x1="272" y1="164" x2="272" y2="212" marker-end="url(#ar5)"/>
+      <rect class="x" x="200" y="214" width="150" height="40" rx="7"/><text class="xt" x="275" y="230" text-anchor="middle">calm sample → sembast</text><text class="xt" x="275" y="244" text-anchor="middle">(ML training data)</text>
+      <line class="lx" x1="538" y1="172" x2="538" y2="212" marker-end="url(#ar5)"/>
+      <rect class="x" x="452" y="214" width="176" height="40" rx="7"/><text class="xt" x="540" y="230" text-anchor="middle">DailySummary → SharedPreferences</text><text class="xt" x="540" y="244" text-anchor="middle">(≤90 days)</text>
+      <!-- fall branch -->
+      <line class="lx" x1="160" y1="120" x2="160" y2="60" marker-end="url(#ar5)"/>
+      <rect class="xr" x="70" y="20" width="200" height="40" rx="7"/><text class="xh" x="170" y="37" text-anchor="middle" fill="#a3342f">motion → Fall detection</text><text class="xt" x="170" y="51" text-anchor="middle" fill="#a3342f">fall → Emergency → SMS/call/GPS</text>
+    </svg>
+    <figcaption>One reading, end to end: the green path is per-tick inference; blue is the UI; the lower branches persist data; the red branch is the independent fall→emergency path.</figcaption>
+  </figure>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">prana_health_controller.dart · sensor_parser.dart · feature_processor.dart · personalized_inference_service.dart · risk_engine.dart · vitals_sample_store.dart · local_storage_service.dart · fall_detection_service.dart</span></div>
+</div>
+
+<!-- ============================ 23. APIS / 3P ============================ -->
+<div class="wrap sec" id="s23">
+  <div class="sec-head"><div class="sec-num">23</div><div><div class="sec-kick">Outside connections</div><div class="sec-title">APIs &amp; Third-Party Services</div></div></div>
+  <div class="callout c-red"><span class="lab">No third-party or cloud services</span>
+  No analytics, no crash reporting, no maps SDK, no cloud storage, no auth provider, no AI API. Not found in the current codebase.</div>
+  <p style="font-size:9.2pt;">The only external interfaces are <b>platform</b> APIs on the phone itself and the <b>Bluetooth</b> link:</p>
+  <table class="z">
+    <tr><th style="width:34%">Interface</th><th>Used for</th></tr>
+    <tr><td>Android <code>SmsManager</code></td><td>Sending the emergency SMS</td></tr>
+    <tr><td>Android telephony (<code>ACTION_CALL</code>)</td><td>Placing the emergency call</td></tr>
+    <tr><td>Android <code>LocationManager</code></td><td>One-shot GPS fix for the alert</td></tr>
+    <tr><td>androidx <code>FileProvider</code></td><td>Sharing/opening the generated PDF &amp; CSV</td></tr>
+    <tr><td>BLE GATT (flutter_blue_plus)</td><td>Reading the wearable's characteristics</td></tr>
+  </table>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">MainActivity.kt · emergency_dispatcher.dart · ble_constants.dart · bluetooth_sensor_data_source.dart</span></div>
+</div>
+
+<!-- ============================ 24. TESTING ============================ -->
+<div class="wrap sec sec-break" id="s24">
+  <div class="sec-head"><div class="sec-num">24</div><div><div class="sec-kick">What's proven</div><div class="sec-title">Testing</div></div></div>
+  <div class="callout c-plain"><span class="lab">In simple terms</span>
+  The trickiest core logic has automated tests — the parts where a bug would be dangerous or invisible (baseline maths, feature extraction, risk levels, packet parsing, the emergency state machine). The UI and some newer pieces are not yet covered by automated tests.</div>
+  <table class="z">
+    <tr><th style="width:42%">Test file</th><th style="width:12%">Cases</th><th>Covers</th></tr>
+    <tr><td>baseline_service_test.dart</td><td>4</td><td>Default bounds, HR deviation %, SpO₂ drop, learning without error</td></tr>
+    <tr><td>emergency_service_test.dart</td><td>3</td><td>State machine: ready → SOS sent (honest "location unavailable") → resolved</td></tr>
+    <tr><td>feature_processor_test.dart</td><td>1</td><td>Exactly 16 finite features</td></tr>
+    <tr><td>mock_sensor_data_source_test.dart</td><td>2</td><td>Simulated fall emits; scenario switching doesn't error</td></tr>
+    <tr><td>risk_engine_test.dart</td><td>2</td><td>Safe under rest; high/critical under extreme heat + tachycardia</td></tr>
+    <tr><td>sensor_parser_test.dart</td><td>6</td><td>Valid/invalid JSON; 8- &amp; 16-bit GATT HR, SpO₂, battery</td></tr>
+  </table>
+  <p style="font-size:9pt;"><b>Total: 6 files, ~18 unit tests</b> (pure Dart, <code>flutter_test</code>). <b>Not covered:</b> PDF builder, CSV export, recommendation engine, ML personalization, and any widget/integration test.</p>
+  <div class="callout c-evid"><span class="lab">Evidence</span><span class="mono">test/ (six files) · analysis_options.yaml (flutter_lints, no extra rules)</span></div>
+</div>
+
+<!-- ============================ 25. LIMITATIONS ============================ -->
+<div class="wrap sec" id="s25">
+  <div class="sec-head"><div class="sec-num">25</div><div><div class="sec-kick">Own these before a judge finds them</div><div class="sec-title">Current Limitations</div></div></div>
+  <table class="z">
+    <tr><th style="width:34%">Limitation</th><th>Honest framing</th></tr>
+    <tr><td>Shipped TFLite model unused</td><td>Live path is the personalized service; the <code>.tflite</code> is trained but not wired in</td></tr>
+    <tr><td>No accuracy metrics</td><td>No precision/recall/AUC; on-screen confidence (~0.92) is a placeholder constant</td></tr>
+    <tr><td>No encryption at rest</td><td>Plaintext SharedPreferences + sembast; SQLCipher scaffolded but inert</td></tr>
+    <tr><td>Debug signing on release</td><td>No production keystore configured yet</td></tr>
+    <tr><td>Locked-screen fall reliability</td><td>No foreground/background service; detection is best-effort while the app is alive</td></tr>
+    <tr><td>Android-only native features</td><td>Emergency/file channels not implemented for iOS/desktop</td></tr>
+    <tr><td>Sleep data is sample data</td><td>Sleep staging is demo-only, gated behind demo mode; no sensor produces it</td></tr>
+    <tr><td>Single-user, no sync</td><td>No accounts, no cross-device or cross-user aggregation</td></tr>
+    <tr><td>Large controller</td><td>The central controller is a ~700-line "god object" — a known refactor target</td></tr>
+    <tr><td>Some 2-sample trends</td><td>Certain trend readouts use a short delta rather than a long window</td></tr>
+    <tr><td>App ID / README</td><td>Still the template <code>com.example</code> ID; README is stock boilerplate</td></tr>
+    <tr><td>Depends on a compatible band</td><td>Real vitals need a band speaking the expected BLE contract; else demo mode</td></tr>
+  </table>
+  <div class="callout c-warn"><span class="lab">The move</span>Volunteer two or three of these before you're asked. Judges trust a team that clearly knows its own edges far more than one that claims perfection.</div>
+</div>
+
+<!-- ============================ 26. FUTURE SCOPE ============================ -->
+<div class="wrap sec sec-break" id="s26">
+  <div class="sec-head"><div class="sec-num">26</div><div><div class="sec-kick">Where it goes next</div><div class="sec-title">Future Scope</div></div></div>
+  <div class="grid2">
+    <div class="card"><h4>Short term</h4><ul class="tight" style="font-size:9pt;"><li>Real release signing + proper app ID</li><li>Turn on encryption at rest (the scaffolding is already there)</li><li>Foreground service for reliable locked-screen fall alerts</li><li>Product README + onboarding polish</li></ul></div>
+    <div class="card"><h4>Medium term</h4><ul class="tight" style="font-size:9pt;"><li>Collect labelled data; train &amp; wire a real supervised model with published metrics</li><li>iOS native emergency/file channels</li><li>Widget/integration test suite</li><li>Optional clinician-shareable dashboard</li></ul></div>
+  </div>
+  <div class="card" style="margin-top:8pt;"><h4>Long term</h4><ul class="tight" style="font-size:9pt;"><li>Opt-in encrypted cloud sync &amp; multi-device</li><li>Population/fleet view for authorities during disasters (privacy-preserving)</li><li>Federated learning so the model improves across devices without sharing raw data</li><li>Richer sensing (ECG, cuff BP) and clinical validation toward regulatory standards</li></ul></div>
+  <div class="callout c-plain"><span class="lab">Framing</span>Notice the theme: most near-term items are <b>finishing things already scaffolded</b> (encryption, signing), which is a credible, low-risk roadmap — not a wish list.</div>
+</div>
+
+<!-- ============================ 27. JUDGE Q&A ============================ -->
+<div class="wrap sec sec-break" id="s27">
+  <div class="sec-head"><div class="sec-num">27</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">Judge Question Prep — 40+</div></div></div>
+  <p class="lead">Each question has three lines: <b>Say</b> (your out-loud answer), <b>Tech</b> (the precise backup if pressed), and <b>Proof</b> (the file that settles it). Read the <b>Say</b> lines end-to-end the night before; the rest is your safety net.</p>
+
+  <div class="grp" style="font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);font-weight:700;margin:10pt 0 2pt;">A · Product &amp; problem</div>
+
+  <div class="qa"><div class="q">1. What problem does PRANA solve?</div>
+    <div class="a"><b>Say:</b> It's a personal early-warning system for your health and your surroundings that keeps working with no internet — for heatwaves, bad air, and emergencies where help is far away.</div>
+    <div class="a"><b>Tech:</b> Offline-first monitoring of body vitals + environment, a personalized risk score, and autonomous emergency dispatch.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">whole app is offline; emergency_dispatcher.dart</span></div></div>
+
+  <div class="qa"><div class="q">2. Who is it for?</div>
+    <div class="a"><b>Say:</b> Vulnerable people and outdoor/rural workers — the elderly, those with heart or respiratory conditions, anyone exposed to heat or pollution where a hospital isn't next door.</div>
+    <div class="a"><b>Tech:</b> Profile carries a "vulnerable" flag and conditions that feed risk framing; scenarios model heatwave, pollution, flood, cyclone, elderly.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">profile model · mock_sensor_data_source.dart (scenarios)</span></div></div>
+
+  <div class="qa"><div class="q">3. Why does offline matter so much?</div>
+    <div class="a"><b>Say:</b> The moments this app is built for — disasters, remote areas — are exactly when networks fail. If it needed the cloud, it would fail when you need it most.</div>
+    <div class="a"><b>Tech:</b> No network client for app data; all inference/storage on device; only emergency uses cellular SMS/call.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">§13; no HTTP client in repo</span></div></div>
+
+  <div class="qa"><div class="q">4. What makes it different from a smartwatch app?</div>
+    <div class="a"><b>Say:</b> Two things: it learns <em>your</em> normal on the device and explains its reasoning, and it can raise a real alarm by itself — SMS, call and location — with no phone-maker cloud in the loop.</div>
+    <div class="a"><b>Tech:</b> On-device personalization (Welford + autoencoder) + transparent heuristics + native autonomous dispatch.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">personal_model.dart · autoencoder.dart · MainActivity.kt</span></div></div>
+
+  <div class="qa"><div class="q">5. Is this a medical device?</div>
+    <div class="a"><b>Say:</b> No — it's a wellness and early-warning aid, and the report literally says it's not a diagnostic device. That honesty is deliberate.</div>
+    <div class="a"><b>Tech:</b> Disclaimer embedded in the generated PDF; no diagnostic claims anywhere.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">report_pdf_builder.dart (disclaimer ~:1026–1047)</span></div></div>
+
+  <div class="grp" style="font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);font-weight:700;margin:10pt 0 2pt;">B · Architecture &amp; tech</div>
+
+  <div class="qa"><div class="q">6. What's the tech stack?</div>
+    <div class="a"><b>Say:</b> Flutter and Dart for the app, Bluetooth to the band, two small on-device stores, and a little native Kotlin for emergency and file sharing.</div>
+    <div class="a"><b>Tech:</b> Flutter 3.47.2 / Dart 3.13.2, Material 3, Provider; flutter_blue_plus, shared_preferences, sembast, pdf; Kotlin MethodChannels.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">pubspec.yaml · pubspec.lock</span></div></div>
+
+  <div class="qa"><div class="q">7. How is state managed?</div>
+    <div class="a"><b>Say:</b> One central "brain" object holds all the live data and tells the screens when to refresh.</div>
+    <div class="a"><b>Tech:</b> Provider + a single <code>ChangeNotifier</code> (<code>PranaHealthController</code>) as the source of truth; two <code>ValueNotifier</code>s for high-frequency updates.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">prana_health_controller.dart · main.dart:39–44</span></div></div>
+
+  <div class="qa"><div class="q">8. Why one big controller instead of BLoC/Riverpod?</div>
+    <div class="a"><b>Say:</b> For a prototype, one source of truth is the fastest to build and reason about. I know it's grown large — splitting it is on the roadmap.</div>
+    <div class="a"><b>Tech:</b> ~700-line controller; conscious trade-off of simplicity vs. modularity.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">prana_health_controller.dart (§25)</span></div></div>
+
+  <div class="qa"><div class="q">9. Why write your own native code instead of plugins?</div>
+    <div class="a"><b>Say:</b> The third-party plugins we tried broke the Android build toolchain, so we wrote a thin, controlled native layer ourselves — just two channels.</div>
+    <div class="a"><b>Tech:</b> AGP-9/Gradle fragility; own <code>:app</code> MethodChannels keep the native surface small and auditable.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">MainActivity.kt · pubspec.yaml comments</span></div></div>
+
+  <div class="qa"><div class="q">10. Walk me through what happens on one reading.</div>
+    <div class="a"><b>Say:</b> Parse the packet, update your baseline, build a 16-number feature vector, run inference, score risk, pick advice, refresh the screen, and save the day's summary.</div>
+    <div class="a"><b>Tech:</b> The controller pipeline; see §4/§22.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">prana_health_controller.dart (notifyListeners ~:458)</span></div></div>
+
+  <div class="qa"><div class="q">11. Is it cross-platform?</div>
+    <div class="a"><b>Say:</b> The Flutter UI is portable, but the emergency and file features are implemented for Android today; iOS is a clear next step.</div>
+    <div class="a"><b>Tech:</b> Native channels implemented only in the Android <code>MainActivity</code>.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">MainActivity.kt (Android only)</span></div></div>
+
+  <div class="grp" style="font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);font-weight:700;margin:10pt 0 2pt;">C · ML / AI (the hard ones)</div>
+
+  <div class="qa"><div class="q">12. Is there real machine learning, or just if-statements?</div>
+    <div class="a"><b>Say:</b> Both, and I keep them separate. The <em>personalization</em> is real on-device learning — running statistics plus a small autoencoder trained on the phone. The specific risk scores are transparent physiology-based formulas, on purpose.</div>
+    <div class="a"><b>Tech:</b> PersonalModel (Welford + Mahalanobis) + on-device autoencoder = learning; MockInferenceService sigmoids = heuristics.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">personal_model.dart · autoencoder.dart · mock_inference_service.dart</span></div></div>
+
+  <div class="qa"><div class="q">13. Where is the model actually trained?</div>
+    <div class="a"><b>Say:</b> On the device itself, from your own calm readings — no server, no pre-shipped weights for personalization.</div>
+    <div class="a"><b>Tech:</b> Autoencoder trained by SGD/back-prop in a <code>compute()</code> isolate; weights persisted to sembast and reloaded.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">autoencoder.dart:18–405 · vitals_sample_store.dart</span></div></div>
+
+  <div class="qa"><div class="q">14. You ship .tflite files — is that your model?</div>
+    <div class="a"><b>Say:</b> Honest answer: no. One is a real model we trained offline but haven't wired into the live path; the other is a placeholder. The live intelligence is the personalized service.</div>
+    <div class="a"><b>Tech:</b> <code>TFLiteInferenceService</code> is never instantiated; <code>prana_risk_model.tflite</code> is 92 bytes of ASCII.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">tflite_inference_service.dart (dead) · assets/models/</span></div></div>
+
+  <div class="qa"><div class="q">15. What's the accuracy?</div>
+    <div class="a"><b>Say:</b> We don't quote an accuracy number because we haven't measured one on labelled clinical data — I won't claim a figure I can't back. The confidence you see on screen is a placeholder.</div>
+    <div class="a"><b>Tech:</b> No precision/recall/AUC anywhere; confidence ≈0.92 is a constant.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">generate_sih_qa.dart admission · code review</span></div></div>
+
+  <div class="qa"><div class="q">16. What are the 16 features?</div>
+    <div class="a"><b>Say:</b> Your vitals, how far they deviate from your personal normal, a heart-rate trend, the environment around you, and your activity level.</div>
+    <div class="a"><b>Tech:</b> Frozen schema v1.1.0: absolute HR/SpO₂/temp, baseline deviations, OLS HR slope, heat index/AQI/humidity, categorical activity.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">feature_schema.dart · feature_processor.dart · hr_trend_calculator.dart</span></div></div>
+
+  <div class="qa"><div class="q">17. How does it know what's normal for me?</div>
+    <div class="a"><b>Say:</b> It quietly averages your calm readings over time and measures how far a new reading strays from that.</div>
+    <div class="a"><b>Tech:</b> Welford online mean/variance per feature; Mahalanobis distance for multivariate deviation.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">personal_model.dart:41–68</span></div></div>
+
+  <div class="qa"><div class="q">18. Couldn't it "learn" a dangerous reading as normal?</div>
+    <div class="a"><b>Say:</b> No — we put hard physiological floors under the score, so a genuinely dangerous vital always registers, no matter what the personal model learned.</div>
+    <div class="a"><b>Tech:</b> Safety clamps in the personalized service; absolute thresholds in <code>app_constants.dart</code>.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">personalized_inference_service.dart:71–139 · app_constants.dart</span></div></div>
+
+  <div class="qa"><div class="q">19. Why heuristics for risk instead of a trained classifier?</div>
+    <div class="a"><b>Say:</b> Because I can explain and defend every term to a clinician, and because we don't have a labelled dataset to train a trustworthy classifier yet. Explainability beats a black box for a safety tool.</div>
+    <div class="a"><b>Tech:</b> Sigmoids over the feature vector with coefficients from published physiological thresholds.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">mock_inference_service.dart:51–96</span></div></div>
+
+  <div class="grp" style="font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);font-weight:700;margin:10pt 0 2pt;">D · Data &amp; privacy</div>
+
+  <div class="qa"><div class="q">20. Where does my data go?</div>
+    <div class="a"><b>Say:</b> Nowhere. It stays on your phone. There's no server and no account.</div>
+    <div class="a"><b>Tech:</b> SharedPreferences + sembast on-device; no upload path exists.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">local_storage_service.dart · vitals_sample_store.dart</span></div></div>
+
+  <div class="qa"><div class="q">21. Is the stored data encrypted?</div>
+    <div class="a"><b>Say:</b> Not yet — I'll be straight about that. The encryption components are in place but not switched on; it's our top security task. Our current protection is that nothing ever leaves the device.</div>
+    <div class="a"><b>Tech:</b> Plaintext stores; SQLCipher + secure-storage scaffolded but the key manager is never called.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">database_key_manager.dart (inert) · §11</span></div></div>
+
+  <div class="qa"><div class="q">22. Can a user delete their data?</div>
+    <div class="a"><b>Say:</b> Yes — the privacy screen shows exactly what's stored and lets you export or erase it.</div>
+    <div class="a"><b>Tech:</b> Privacy service reports real counts and performs export/erase.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">privacy_service.dart · privacy_screen.dart</span></div></div>
+
+  <div class="qa"><div class="q">23. What permissions do you request, and why?</div>
+    <div class="a"><b>Say:</b> Bluetooth and location for the band, and SMS + phone-call for emergencies — each tied to a feature, nothing extra.</div>
+    <div class="a"><b>Tech:</b> BLUETOOTH_*, ACCESS_*_LOCATION, SEND_SMS, CALL_PHONE.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">AndroidManifest.xml</span></div></div>
+
+  <div class="qa"><div class="q">24. The emergency SMS contains health data — isn't that a privacy risk?</div>
+    <div class="a"><b>Say:</b> It's a deliberate trade-off: in an emergency, giving a trusted contact your vitals and location saves time. It only goes to the contact <em>you</em> saved, and only when triggered.</div>
+    <div class="a"><b>Tech:</b> SMS is inherently unencrypted; sent only to the user-configured contact on SOS/fall.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">emergency_dispatcher.dart</span></div></div>
+
+  <div class="grp" style="font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);font-weight:700;margin:10pt 0 2pt;">E · Emergency &amp; sensors</div>
+
+  <div class="qa"><div class="q">25. Does the SOS actually send anything, or is it a mock-up?</div>
+    <div class="a"><b>Say:</b> It's real. It sends an SMS with your identity, vitals and a Google-Maps location link, and it places a phone call — through Android's own SMS and calling APIs.</div>
+    <div class="a"><b>Tech:</b> <code>prana/emergency</code> channel → <code>SmsManager.sendSms</code>, <code>ACTION_CALL</code>, <code>LocationManager</code>.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">MainActivity.kt · emergency_dispatcher.dart</span></div></div>
+
+  <div class="qa"><div class="q">26. How does fall detection work?</div>
+    <div class="a"><b>Say:</b> The band's motion sensor sees a sharp impact followed by stillness; that pattern triggers a 10-second countdown you can cancel before it alerts anyone.</div>
+    <div class="a"><b>Tech:</b> 3-stage rule: explicit flag OR &gt;2.8&nbsp;g impact then &lt;0.25&nbsp;g stillness within ~2&nbsp;s; then cancelable countdown.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">fall_detection_service.dart:13–39 · app_constants.dart</span></div></div>
+
+  <div class="qa"><div class="q">27. What stops false alarms?</div>
+    <div class="a"><b>Say:</b> Two things: the impact-then-stillness pattern (not just a bump), and a countdown that lets you cancel before anything is sent.</div>
+    <div class="a"><b>Tech:</b> Multi-stage gate + <code>sosCountdownSeconds = 10</code> cancel window.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">fall_detection_service.dart · emergency_screen.dart</span></div></div>
+
+  <div class="qa"><div class="q">28. Careful — could a test fall in the demo send a real SMS?</div>
+    <div class="a"><b>Say:</b> Yes, and I'm glad you asked — dispatch is real and <em>not</em> gated by demo mode. For the demo I've cleared the emergency contact (or I'll cancel during the countdown) so we don't text a real person.</div>
+    <div class="a"><b>Tech:</b> Emergency fires on the state transition regardless of mock mode; guard by clearing the contact.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">emergency_service.dart · emergency_dispatcher.dart</span></div></div>
+
+  <div class="qa"><div class="q">29. Where do the vitals come from — is the data faked?</div>
+    <div class="a"><b>Say:</b> Real vitals come from the band over Bluetooth. There's also a clearly-labelled Demo mode with realistic scenarios for when no band is present.</div>
+    <div class="a"><b>Tech:</b> Default source is BLE; <code>MockSensorDataSource</code> is opt-in and physiologically smoothed.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">bluetooth_sensor_data_source.dart · mock_sensor_data_source.dart</span></div></div>
+
+  <div class="qa"><div class="q">30. What if the band disconnects?</div>
+    <div class="a"><b>Say:</b> The screens show honest empty-states and prompt to reconnect — it never invents numbers.</div>
+    <div class="a"><b>Tech:</b> <code>hasLiveData</code> gates the UI; parser emits only present fields.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">environment_screen.dart:65 · sensor_parser.dart</span></div></div>
+
+  <div class="grp" style="font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);font-weight:700;margin:10pt 0 2pt;">F · Deployment &amp; production</div>
+
+  <div class="qa"><div class="q">31. Is it ready for the Play Store?</div>
+    <div class="a"><b>Say:</b> It's a solid prototype. Before store release it needs real signing, a proper app ID, and encryption switched on — all known, scoped items.</div>
+    <div class="a"><b>Tech:</b> Debug signing; template app ID; encryption inert. (§16)</div>
+    <div class="a"><b>Proof:</b> <span class="mono">build.gradle.kts:37–41</span></div></div>
+
+  <div class="qa"><div class="q">32. How is it built and run?</div>
+    <div class="a"><b>Say:</b> One command builds a single APK; it runs on a normal Android phone with no server to stand up.</div>
+    <div class="a"><b>Tech:</b> <code>compileSdk 37</code>, Java/Kotlin 17, Flutter default min/target SDK; <code>flutter run</code>.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">android/app/build.gradle.kts</span></div></div>
+
+  <div class="qa"><div class="q">33. Will fall detection work with the screen off?</div>
+    <div class="a"><b>Say:</b> Best-effort today — there's no background service yet, so reliability with the app killed isn't guaranteed. Adding a foreground service is the fix, and it's on the roadmap.</div>
+    <div class="a"><b>Tech:</b> No foreground/background service or receiver declared.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">AndroidManifest.xml (§25/§26)</span></div></div>
+
+  <div class="qa"><div class="q">34. How do you get data to a doctor?</div>
+    <div class="a"><b>Say:</b> One tap generates a clean multi-page PDF with charts and a summary, shareable like any file. You can also export the raw readings as CSV.</div>
+    <div class="a"><b>Tech:</b> Pure-Dart <code>pdf</code> builder; share via the <code>prana/files</code> FileProvider channel.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">report_pdf_builder.dart · data_export_service.dart</span></div></div>
+
+  <div class="qa"><div class="q">35. What does it cost to run at scale?</div>
+    <div class="a"><b>Say:</b> Almost nothing on our side — there are no servers. Every phone does its own work, so a million users cost us no infrastructure.</div>
+    <div class="a"><b>Tech:</b> Fully on-device; no backend to scale. (§15)</div>
+    <div class="a"><b>Proof:</b> <span class="mono">no server tier exists</span></div></div>
+
+  <div class="grp" style="font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--brand2);font-weight:700;margin:10pt 0 2pt;">G · Honesty &amp; limitations</div>
+
+  <div class="qa"><div class="q">36. What's the weakest part of the app?</div>
+    <div class="a"><b>Say:</b> Two: no encryption at rest yet, and no measured accuracy for the models. Both are known, and both have a clear plan.</div>
+    <div class="a"><b>Tech:</b> Plaintext stores; no metrics. (§25)</div>
+    <div class="a"><b>Proof:</b> <span class="mono">§11 · §9</span></div></div>
+
+  <div class="qa"><div class="q">37. What would you fix first with more time?</div>
+    <div class="a"><b>Say:</b> Turn on encryption (the scaffolding's already there), add a foreground service for reliable fall alerts, and set up real release signing.</div>
+    <div class="a"><b>Tech:</b> Finishing scaffolded work, not new architecture.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">§26</span></div></div>
+
+  <div class="qa"><div class="q">38. How much did you build vs. libraries?</div>
+    <div class="a"><b>Say:</b> The intelligence and logic are ours — the feature pipeline, the personalization, the risk and recommendation engines, the native emergency layer. Libraries handle plumbing like BLE and PDF.</div>
+    <div class="a"><b>Tech:</b> Custom: ML, risk, recommendations, parser, native channels. Libraries: transport/format only.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">lib/features/* · MainActivity.kt</span></div></div>
+
+  <div class="qa"><div class="q">39. Is any of the demo faked for the pitch?</div>
+    <div class="a"><b>Say:</b> The disaster scenarios and the sleep panel are clearly demo data — I'll label them as such live. Everything else is the real pipeline.</div>
+    <div class="a"><b>Tech:</b> Scenarios in mock source; sleep is a fixed literal behind demo mode.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">mock_sensor_data_source.dart · controller (sleep sample)</span></div></div>
+
+  <div class="qa"><div class="q">40. What's genuinely innovative here?</div>
+    <div class="a"><b>Say:</b> On-device personalized learning that works fully offline, combined with autonomous, real emergency dispatch — most consumer apps have one or the other, and route through the cloud. We do both, on the phone.</div>
+    <div class="a"><b>Tech:</b> Edge learning (Welford + autoencoder) + native SMS/call/GPS with graceful degradation.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">autoencoder.dart · personal_model.dart · MainActivity.kt</span></div></div>
+
+  <div class="qa"><div class="q">41. Why should this win?</div>
+    <div class="a"><b>Say:</b> Because it solves a real problem for the people most exposed, it works when the network doesn't, it's honest about what it can and can't do, and every claim we make is backed by code we can open right now.</div>
+    <div class="a"><b>Tech:</b> Offline-first, explainable, on-device ML, real emergency response — all verifiable in this repo.</div>
+    <div class="a"><b>Proof:</b> <span class="mono">this entire document</span></div></div>
+</div>
+
+<!-- ============================ 28. TOP 20 HIGH-RISK ============================ -->
+<div class="wrap sec sec-break" id="s28">
+  <div class="sec-head"><div class="sec-num">28</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">Top 20 High-Risk Questions</div></div></div>
+  <p class="lead">The ones that can rattle you — because the honest answer is "not yet" or "it's a demo." Memorise the one-liner. The move every time is the same: <b>admit it plainly, then show the plan.</b> Judges reward the candour; they punish the bluff.</p>
+  <table class="z small">
+    <tr><th style="width:4%">#</th><th style="width:42%">The scary question</th><th>Your one-line answer</th></tr>
+    <tr><td>1</td><td>"Is the ML real or just if-statements?"</td><td>Personalization is real on-device learning; the risk scores are transparent physiology formulas — and I keep the two clearly separate.</td></tr>
+    <tr><td>2</td><td>"What's your accuracy?"</td><td>We don't quote one — we've not measured against labelled clinical data, and I won't claim a number I can't defend.</td></tr>
+    <tr><td>3</td><td>"You ship .tflite files — is that the model?"</td><td>No. One's a real model not yet wired in, one's a placeholder; the live intelligence is the personalized Dart service.</td></tr>
+    <tr><td>4</td><td>"Is the data encrypted at rest?"</td><td>Not yet — the components are scaffolded but off. Our protection today is that nothing ever leaves the phone. It's my #1 fix.</td></tr>
+    <tr><td>5</td><td>"Could a test fall text a real person?"</td><td>Yes — dispatch is real and not demo-gated. I've cleared the contact for the demo, or I'll cancel in the 10-second window.</td></tr>
+    <tr><td>6</td><td>"Is this production-ready?"</td><td>It's a strong prototype; release needs real signing, a proper app ID, and encryption on — all known and scoped.</td></tr>
+    <tr><td>7</td><td>"What's the 0.92 confidence?"</td><td>A placeholder constant, not a measured metric — I'd rather tell you that than pretend.</td></tr>
+    <tr><td>8</td><td>"Does fall detection work with the app closed?"</td><td>Best-effort today; there's no background service yet. Adding a foreground service is the fix and it's on the roadmap.</td></tr>
+    <tr><td>9</td><td>"Is any demo data faked?"</td><td>The disaster scenarios and the sleep panel are clearly demo data — I label them live. The pipeline behind them is real.</td></tr>
+    <tr><td>10</td><td>"Could it learn a dangerous reading as normal?"</td><td>No — hard physiological floors sit under the personal model, so a genuinely dangerous vital always registers.</td></tr>
+    <tr><td>11</td><td>"Why no trained classifier for risk?"</td><td>No labelled dataset yet, and explainability matters for a safety tool — I can defend every term to a clinician.</td></tr>
+    <tr><td>12</td><td>"Isn't one giant controller bad design?"</td><td>For a prototype it's the clearest single source of truth; modularising it is a known refactor, not a rewrite.</td></tr>
+    <tr><td>13</td><td>"SMS is unencrypted — privacy concern?"</td><td>A deliberate trade-off: in an emergency, speed to a contact you chose beats secrecy. It only fires on trigger.</td></tr>
+    <tr><td>14</td><td>"What if there's no GPS fix?"</td><td>The alert still sends with vitals and identity; the location line is simply omitted rather than faked.</td></tr>
+    <tr><td>15</td><td>"How is this different from Google Fit / a watch?"</td><td>On-device personalization <em>and</em> autonomous real emergency dispatch, fully offline — not routed through a vendor cloud.</td></tr>
+    <tr><td>16</td><td>"What did you actually build vs. libraries?"</td><td>The ML, risk, recommendations, parser and native emergency layer are ours; libraries only do BLE transport and PDF format.</td></tr>
+    <tr><td>17</td><td>"iOS?"</td><td>The Flutter UI is portable; emergency/file features are Android-native today — iOS is a clear next step.</td></tr>
+    <tr><td>18</td><td>"Where's the trained neural network at runtime?"</td><td>The autoencoder — trained on-device from your calm readings — runs for personalization; it is not a shipped pre-trained net.</td></tr>
+    <tr><td>19</td><td>"Can you prove these claims?"</td><td>Yes — every section here cites the exact file. I can open any of them right now.</td></tr>
+    <tr><td>20</td><td>"Why should this win?"</td><td>Real problem, works offline when it matters most, honest about limits, and every claim is backed by code in this repo.</td></tr>
+  </table>
+  <div class="callout c-warn"><span class="lab">The one rule</span>Never bluff a metric or a capability. A confident "not yet, and here's the plan" wins the room; a fabricated number loses it the moment someone asks a follow-up.</div>
+</div>
+
+<!-- ============================ 29. 60-SECOND EXPLANATION ============================ -->
+<div class="wrap sec sec-break" id="s29">
+  <div class="sec-head"><div class="sec-num">29</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">The 60-Second Explanation</div></div></div>
+  <p class="lead">Learn this almost word-for-word. It's your opener when a judge says "so, what is it?" — one calm minute, no jargon.</p>
+  <div class="card" style="border-left:4px solid var(--brand2);">
+    <p style="margin:0 0 7pt;"><b>"PRANA is a personal early-warning system for your health and your surroundings — and it works with no internet at all.</b></p>
+    <p style="margin:0 0 7pt;">You wear a small band; it streams your heart rate, oxygen, temperature and the air and heat around you to the phone over Bluetooth. On the phone — not on any server — PRANA learns what <em>normal</em> looks like for <em>you</em>, and flags when something drifts toward dangerous. It turns that into a single risk score with a plain-language reason, so you actually understand it.</p>
+    <p style="margin:0 0 7pt;">And if something goes badly wrong — a fall, or you hit SOS — it acts on its own: it texts a trusted contact your vitals and a map link, and places a call. No cloud, no account, nothing leaves your phone unless it's an emergency.</p>
+    <p style="margin:0;">We built it for the people most exposed — the elderly, outdoor workers, anyone far from a hospital — because those are exactly the moments the network isn't there. It's honest about being a wellness aid, not a medical device — and every feature I just described is real code we can open right now."</p>
+  </div>
+  <div class="callout c-plain"><span class="lab">Delivery tip</span>Pause after "with no internet at all" and after "acts on its own." Those are the two lines judges remember.</div>
+</div>
+
+<!-- ============================ 30. 3-MINUTE TECHNICAL SCRIPT ============================ -->
+<div class="wrap sec sec-break" id="s30">
+  <div class="sec-head"><div class="sec-num">30</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">3-Minute Technical Presentation</div></div></div>
+  <p class="lead">For the technical round. Six beats, ~30 seconds each. Say the beat, don't read it — the bold phrase is your anchor.</p>
+
+  <table class="z small">
+    <tr><th style="width:12%">Time</th><th style="width:24%">Beat</th><th>What you say</th></tr>
+    <tr><td><b>0:00–0:30</b></td><td>Problem &amp; stance</td><td>"PRANA is an <b>offline-first, on-device</b> health-and-environment early-warning app. No backend, no cloud, no account — everything runs on the phone, which is the whole point for disasters and remote areas."</td></tr>
+    <tr><td><b>0:30–1:00</b></td><td>Data in</td><td>"A BLE band streams vitals and environment. We parse the packet, then build a <b>frozen 16-feature vector</b> — absolute vitals, how far each strays from your personal baseline, a heart-rate trend, and the environment." <span class="mono">feature_processor.dart</span></td></tr>
+    <tr><td><b>1:00–1:40</b></td><td>The intelligence</td><td>"Two layers, kept separate. <b>Real on-device learning</b> — Welford running statistics plus a small autoencoder we train on the phone from your calm readings — personalizes to you. Then <b>transparent physiology-based formulas</b> turn the vector into risk scores I can defend term by term." <span class="mono">personal_model.dart · autoencoder.dart · mock_inference_service.dart</span></td></tr>
+    <tr><td><b>1:40–2:10</b></td><td>Safety net</td><td>"Because personalization could drift, we clamp with <b>hard physiological floors</b> — a dangerous vital always registers. Fall detection is a multi-stage rule with a cancelable countdown to kill false alarms." <span class="mono">personalized_inference_service.dart · fall_detection_service.dart</span></td></tr>
+    <tr><td><b>2:10–2:40</b></td><td>Autonomous response</td><td>"Emergencies are <b>real native dispatch</b> — a Kotlin channel calls Android's SmsManager, ACTION_CALL and LocationManager to text vitals + a map link and place a call. It degrades gracefully if GPS or a contact is missing." <span class="mono">MainActivity.kt · emergency_dispatcher.dart</span></td></tr>
+    <tr><td><b>2:40–3:00</b></td><td>Honest close</td><td>"Storage is on-device in two stores; encryption is scaffolded and next on our list. We quote <b>no accuracy number</b> because we haven't measured one — and we'd rather be trusted than impressive. Every claim maps to a file in this repo."</td></tr>
+  </table>
+  <div class="callout c-tech"><span class="lab">If they stop you early</span>Make sure you've said beats 3 and 5 (the intelligence and the emergency dispatch) — those are the two that carry the score. Everything else is supporting detail.</div>
+</div>
+
+<!-- ============================ 31. DEMO DAY FLOW ============================ -->
+<div class="wrap sec sec-break" id="s31">
+  <div class="sec-head"><div class="sec-num">31</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">Demo Day Flow</div></div></div>
+  <p class="lead">The exact click-path, in an order that tells a story and never surprises you. Rehearse it twice before you present.</p>
+
+  <h4 class="sub">Before you walk up (the safety checklist)</h4>
+  <div class="callout c-red"><span class="lab">Do this first — every time</span>
+    <b>Clear the emergency contact</b> in Profile (or be ready to cancel the 10-second countdown). Emergency dispatch is <em>real</em> and is <em>not</em> disabled in demo mode — a live fall test <b>will</b> text and call a real number otherwise.</div>
+  <table class="z small">
+    <tr><th style="width:6%">✓</th><th>Check</th></tr>
+    <tr><td>☐</td><td>Phone charged, screen-timeout long, Do-Not-Disturb off (so alerts are visible).</td></tr>
+    <tr><td>☐</td><td>Band paired and streaming <em>or</em> Demo mode ready — decide which you're showing.</td></tr>
+    <tr><td>☐</td><td>Emergency contact cleared (see red box above).</td></tr>
+    <tr><td>☐</td><td>A report already generated once, so the PDF share sheet is warm.</td></tr>
+  </table>
+
+  <h4 class="sub">The 5-stop tour</h4>
+  <table class="z small">
+    <tr><th style="width:5%">#</th><th style="width:22%">Screen</th><th>What you do &amp; say</th></tr>
+    <tr><td>1</td><td>Dashboard (Home)</td><td>Open on the risk score. "This one number is your current risk, in plain words — worked out entirely on this phone." Point at the greeting + score card.</td></tr>
+    <tr><td>2</td><td>Insights (center button)</td><td>Tap the raised center button. "Here's <em>why</em> — the drivers behind the score, and how it's personalized to me." Show the explanation.</td></tr>
+    <tr><td>3</td><td>Environment</td><td>"And the world around me — feels-like temperature, air quality, safe-exposure time." Show the real cards (AQI now reflects the live reading).</td></tr>
+    <tr><td>4</td><td>SOS (header disc)</td><td>Tap the SOS disc in the header. "In an emergency this fires on its own — SMS with my vitals and location, plus a call." <b>Cancel the countdown</b> to prove the false-alarm guard.</td></tr>
+    <tr><td>5</td><td>Report / Privacy</td><td>Generate the PDF. "A doctor-ready summary in one tap." Then Privacy: "and I can see exactly what's stored and wipe it — nothing ever left the phone."</td></tr>
+  </table>
+  <div class="callout c-plain"><span class="lab">If the band drops mid-demo</span>Don't panic — switch to Demo mode and say so out loud: "I'll show this on our labelled demo data." The honesty reads as confidence, and the screens show honest empty-states either way.</div>
+</div>
+
+<!-- ============================ 32. EXPLAIN LIKE I'M 10 ============================ -->
+<div class="wrap sec sec-break" id="s32">
+  <div class="sec-head"><div class="sec-num">32</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">Explain Like I'm 10</div></div></div>
+  <p class="lead">When someone non-technical asks — a family member, a general-track judge — reach for the story, not the spec.</p>
+  <div class="card" style="border-left:4px solid var(--amber);">
+    <p style="margin:0 0 7pt;"><b>"Imagine a really attentive friend who sits on your wrist.</b></p>
+    <p style="margin:0 0 7pt;">This friend quietly learns what your normal day feels like — how fast your heart usually beats, how warm you usually are. After a while they know <em>your</em> normal, not some average stranger's.</p>
+    <p style="margin:0 0 7pt;">So when something's off — you're getting too hot, or your heart is racing more than it should — they lean over and say, gently, 'hey, something's not right, here's why.'</p>
+    <p style="margin:0 0 7pt;">And if you fall and can't get up, this friend doesn't wait. They pull out a phone, text your family exactly where you are and how you're doing, and call for help — all by themselves.</p>
+    <p style="margin:0;">The best part: this friend never gossips. Everything they notice stays with you, on your phone. They don't phone home to a company, and they don't need the internet to look out for you."</p>
+  </div>
+  <div class="callout c-plain"><span class="lab">Why this lands</span>It maps every real feature to a human idea: personalization → "learns your normal," explainable risk → "tells you why," autonomous dispatch → "calls for help by themselves," on-device privacy → "never gossips." No lie, just plain words.</div>
+</div>
+
+<!-- ============================ 33. ONE-PAGE CHEAT SHEET ============================ -->
+<div class="wrap sec sec-break" id="s33">
+  <div class="sec-head"><div class="sec-num">33</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">One-Page Cheat Sheet</div></div></div>
+  <p class="lead">If you read one page before you walk in, read this one.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 class="sub" style="margin-top:0;color:var(--brand);">✅ 10 sentences I MUST remember</h4>
+      <ol style="margin:0;padding-left:16pt;font-size:9pt;line-height:1.5;">
+        <li>PRANA is <b>offline-first</b> — no backend, no cloud, no account; everything runs on the phone.</li>
+        <li>It <b>learns my personal normal</b> on-device with Welford stats and an autoencoder trained on the phone.</li>
+        <li>Risk scores are <b>transparent physiology formulas</b> I can defend term by term — not a black box.</li>
+        <li>The two are kept <b>separate</b>: real learning for personalization, explainable heuristics for the score.</li>
+        <li><b>Hard physiological floors</b> mean a genuinely dangerous vital always registers.</li>
+        <li>Emergency dispatch is <b>real</b>: native SMS + call + GPS via Android APIs, and it degrades gracefully.</li>
+        <li>Fall detection is a <b>multi-stage rule</b> with a cancelable 10-second countdown for false alarms.</li>
+        <li>The risk score runs the <b>full natural 0–100 range</b> — no artificial cap.</li>
+        <li>All data stays <b>on the phone</b>; the user can view, export and erase it.</li>
+        <li><b>Every claim maps to a file</b> — I can open the code right now.</li>
+      </ol>
+    </div>
+    <div class="card" style="border-color:var(--red-bg);">
+      <h4 class="sub" style="margin-top:0;color:var(--red);">⛔ 10 things I MUST NOT claim</h4>
+      <ol style="margin:0;padding-left:16pt;font-size:9pt;line-height:1.5;">
+        <li>❌ "There's a trained neural network scoring risk in the live path." (Heuristics do that.)</li>
+        <li>❌ "It's 92% accurate." (0.92 is a <b>placeholder constant</b>; no metric is measured.)</li>
+        <li>❌ "The data is encrypted at rest." (Stores are <b>plaintext</b>; encryption is scaffolded, off.)</li>
+        <li>❌ "The .tflite files power the app." (One's unused, one's a 92-byte placeholder.)</li>
+        <li>❌ "It's a medical / diagnostic device." (Wellness &amp; early-warning aid only.)</li>
+        <li>❌ "Fall detection works reliably with the app killed." (No background service yet.)</li>
+        <li>❌ "It's ready for the Play Store." (Debug signing, template app ID.)</li>
+        <li>❌ "Demo mode disables emergency dispatch." (It does <b>not</b> — dispatch is always real.)</li>
+        <li>❌ "The disaster scenarios / sleep panel are live sensor data." (Clearly labelled demo data.)</li>
+        <li>❌ "We validated it on clinical / labelled datasets." (We have not.)</li>
+      </ol>
+    </div>
+  </div>
+
+  <h4 class="sub">Numbers &amp; names to have on the tip of your tongue</h4>
+  <table class="z small">
+    <tr><th style="width:33%">Thing</th><th style="width:34%">Value</th><th>Where</th></tr>
+    <tr><td>Feature vector</td><td>16 features, frozen schema v1.1.0</td><td><span class="mono">feature_schema.dart</span></td></tr>
+    <tr><td>Autoencoder shape</td><td>16-8-4-8-16, trained on-device (SGD)</td><td><span class="mono">autoencoder.dart</span></td></tr>
+    <tr><td>Risk sub-scores</td><td>5 (heat, respiratory, cardio, fatigue, overall)</td><td><span class="mono">mock_inference_service.dart</span></td></tr>
+    <tr><td>Fall thresholds</td><td>impact &gt;2.8 g → stillness &lt;0.25 g within ~2 s</td><td><span class="mono">app_constants.dart</span></td></tr>
+    <tr><td>SOS cancel window</td><td>10 seconds</td><td><span class="mono">emergency_screen.dart</span></td></tr>
+    <tr><td>Risk range</td><td>0–100, uncapped</td><td><span class="mono">risk_engine.dart</span></td></tr>
+    <tr><td>Storage</td><td>SharedPreferences + sembast (<span class="mono">prana_ml.db</span>)</td><td>on-device, plaintext</td></tr>
+    <tr><td>Native channels</td><td><span class="mono">prana/emergency</span>, <span class="mono">prana/files</span></td><td><span class="mono">MainActivity.kt</span></td></tr>
+    <tr><td>Stack</td><td>Flutter 3.47.2 / Dart 3.13.2, Provider, Material 3</td><td><span class="mono">pubspec.lock</span></td></tr>
+  </table>
+  <div class="callout c-tech"><span class="lab">The mantra</span>"Offline. On-device. Personalized. Explainable. Honest." Five words — if you blank, start there and the rest comes back.</div>
+</div>
+
+<!-- ============================ 34. CODEBASE FACT CHECK ============================ -->
+<div class="wrap sec sec-break" id="s34">
+  <div class="sec-head"><div class="sec-num">34</div><div><div class="sec-kick">Face the judges</div><div class="sec-title">Codebase Fact Check</div></div></div>
+  <p class="lead">The final honesty pass — every notable claim, graded against the actual source. <span class="tag-ok">✅ Confirmed</span> = fully in code. <span class="tag-part">⚠️ Partial</span> = present but incomplete or demo-bound. <span class="tag-no">❌ Not implemented</span> = scaffolded or absent. <span class="tag-q">❓ Can't verify</span> = needs data/hardware we don't have here.</p>
+  <table class="z small">
+    <tr><th style="width:38%">Claim / capability</th><th style="width:13%">Status</th><th>Evidence &amp; notes</th></tr>
+    <tr><td>Fully offline; no backend/cloud/account</td><td><span class="tag-ok">✅</span></td><td>No HTTP client for app data anywhere in the repo.</td></tr>
+    <tr><td>BLE ingest of vitals + environment</td><td><span class="tag-ok">✅</span></td><td><span class="mono">bluetooth_sensor_data_source.dart · sensor_parser.dart</span></td></tr>
+    <tr><td>16-feature vector, frozen schema</td><td><span class="tag-ok">✅</span></td><td><span class="mono">feature_schema.dart · feature_processor.dart</span></td></tr>
+    <tr><td>On-device personalization (Welford + Mahalanobis)</td><td><span class="tag-ok">✅</span></td><td><span class="mono">personal_model.dart:41–68</span></td></tr>
+    <tr><td>Autoencoder trained on-device (backprop, isolate)</td><td><span class="tag-ok">✅</span></td><td><span class="mono">autoencoder.dart</span>; persisted to sembast.</td></tr>
+    <tr><td>Personalized service is the live inference path</td><td><span class="tag-ok">✅</span></td><td><span class="mono">main.dart</span> injects it via <span class="mono">customMlService</span>.</td></tr>
+    <tr><td>Risk scores from trained ML classifier</td><td><span class="tag-no">❌</span></td><td>Scores are heuristic sigmoids — <span class="mono">mock_inference_service.dart</span>. (By design.)</td></tr>
+    <tr><td>Bundled .tflite models power the app</td><td><span class="tag-no">❌</span></td><td><span class="mono">TFLiteInferenceService</span> never instantiated; one model is a 92-byte placeholder.</td></tr>
+    <tr><td>Safety floors under personalization</td><td><span class="tag-ok">✅</span></td><td><span class="mono">personalized_inference_service.dart:71–139</span></td></tr>
+    <tr><td>Measured accuracy / precision / recall</td><td><span class="tag-no">❌</span></td><td>No metrics; on-screen confidence ≈0.92 is a constant.</td></tr>
+    <tr><td>Real emergency SMS + call + location</td><td><span class="tag-ok">✅</span></td><td><span class="mono">MainActivity.kt</span> → SmsManager / ACTION_CALL / LocationManager.</td></tr>
+    <tr><td>Emergency degrades gracefully (no GPS/contact)</td><td><span class="tag-ok">✅</span></td><td><span class="mono">emergency_dispatcher.dart</span> omits missing fields.</td></tr>
+    <tr><td>Fall detection (multi-stage + countdown)</td><td><span class="tag-ok">✅</span></td><td><span class="mono">fall_detection_service.dart:13–39</span>; band IMU only.</td></tr>
+    <tr><td>Fall detection with app closed / screen off</td><td><span class="tag-part">⚠️</span></td><td>No foreground/background service declared — best-effort only.</td></tr>
+    <tr><td>Encryption at rest</td><td><span class="tag-no">❌</span></td><td>SQLCipher/secure-storage scaffolded; key manager never called.</td></tr>
+    <tr><td>User can view / export / erase data</td><td><span class="tag-ok">✅</span></td><td><span class="mono">privacy_service.dart · privacy_screen.dart</span></td></tr>
+    <tr><td>Doctor-ready PDF + CSV export</td><td><span class="tag-ok">✅</span></td><td><span class="mono">report_pdf_builder.dart · data_export_service.dart</span></td></tr>
+    <tr><td>Risk score uncapped 0–100</td><td><span class="tag-ok">✅</span></td><td><span class="mono">risk_engine.dart</span>; old demo cap removed.</td></tr>
+    <tr><td>Disaster scenarios are live sensor data</td><td><span class="tag-part">⚠️</span></td><td>Demo-only, physiologically smoothed — <span class="mono">mock_sensor_data_source.dart</span>.</td></tr>
+    <tr><td>Sleep panel is measured</td><td><span class="tag-part">⚠️</span></td><td>Fixed literal behind demo mode — not from a sensor.</td></tr>
+    <tr><td>Release-ready signing / app ID</td><td><span class="tag-no">❌</span></td><td>Debug signing; template <span class="mono">com.example.sih_test_app_new</span>.</td></tr>
+    <tr><td>iOS support for emergency/files</td><td><span class="tag-no">❌</span></td><td>Native channels implemented only in Android <span class="mono">MainActivity.kt</span>.</td></tr>
+    <tr><td>Cross-platform Flutter UI</td><td><span class="tag-ok">✅</span></td><td>UI layer is portable Dart/Flutter.</td></tr>
+    <tr><td>Real-world clinical validation</td><td><span class="tag-q">❓</span></td><td>Requires labelled clinical data + trials — out of scope for this build.</td></tr>
+    <tr><td>Battery / long-run performance on real hardware</td><td><span class="tag-q">❓</span></td><td>Not benchmarked here; needs on-device profiling.</td></tr>
+  </table>
+  <div class="callout c-evid"><span class="lab">Bottom line</span>Everything graded ✅ is demonstrable from this repo today. Everything ⚠️/❌ has a named file and a place on the roadmap (§26). Nothing in this manual is a claim you can't open the code to prove — which is exactly what lets you speak to judges with a straight back.</div>
+</div>
+
+<div class="wrap" style="text-align:center;margin:22pt 0 6pt;color:var(--muted);font-size:8.5pt;">
+  <div class="divider"></div>
+  <p style="margin:0;">End of manual · <b style="color:var(--brand);">PRANA — App Overview &amp; Judge Prep</b> · generated 13 September 2026 from the live codebase.</p>
+  <p style="margin:4pt 0 0;">Every claim herein cites the file that proves it. When in doubt, open the code.</p>
+</div>
+</body>
+</html>

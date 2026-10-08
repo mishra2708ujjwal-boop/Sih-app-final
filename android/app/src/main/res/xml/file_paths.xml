@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Directories the FileProvider (see AndroidManifest.xml) is allowed to hand out
+  as content:// URIs. The doctor report is written to the app cache via
+  path_provider's getTemporaryDirectory() (= Context.getCacheDir()), so the
+  <cache-path> entry is the one that matters; the others are harmless and cover
+  files-dir writes if the save location ever changes.
+-->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="cache" path="." />
+    <files-path name="files" path="." />
+    <external-cache-path name="external_cache" path="." />
+    <external-files-path name="external_files" path="." />
+</paths>

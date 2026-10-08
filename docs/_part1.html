@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PRANA — Complete Developer &amp; Integration Manual</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 10pt; line-height: 1.55; color: #1A1E24; margin: 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  h1 { font-size: 21pt; color: #005F73; margin: 0 0 4pt; letter-spacing: -0.4pt; }
+  h2 {
+    font-size: 15pt; color: #005F73; margin: 26pt 0 8pt;
+    padding-bottom: 4pt; border-bottom: 2px solid #0A9396; page-break-after: avoid;
+  }
+  h3 { font-size: 11.5pt; color: #003844; margin: 16pt 0 5pt; page-break-after: avoid; }
+  h4 { font-size: 10pt; color: #334155; margin: 12pt 0 4pt; page-break-after: avoid; }
+  p { margin: 0 0 7pt; }
+  ul, ol { margin: 0 0 8pt; padding-left: 18pt; }
+  li { margin-bottom: 3pt; }
+  code {
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 8.6pt; background: #F1F5F9; padding: 1px 4px;
+    border-radius: 3px; color: #003844;
+  }
+  pre {
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 8pt; line-height: 1.42; background: #F8FAFC;
+    border: 1px solid #E8EDF3; border-left: 3px solid #0A9396;
+    border-radius: 4px; padding: 8pt 10pt; overflow-wrap: break-word;
+    white-space: pre-wrap; margin: 0 0 9pt; page-break-inside: avoid;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  pre .c { color: #64748B; font-style: italic; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 10pt; font-size: 8.6pt; page-break-inside: avoid; }
+  th { background: #005F73; color: #fff; text-align: left; padding: 5pt 6pt; font-weight: 600; }
+  td { border-bottom: 1px solid #E8EDF3; padding: 4.5pt 6pt; vertical-align: top; }
+  tr:nth-child(even) td { background: #F8FAFC; }
+  td code, th code { font-size: 8pt; }
+  .box { border-radius: 5px; padding: 8pt 11pt; margin: 0 0 10pt; page-break-inside: avoid; font-size: 9.3pt; }
+  .note    { background: #F0F9FF; border-left: 4px solid #0284C7; }
+  .warn    { background: #FFFBEB; border-left: 4px solid #F59E0B; }
+  .gap     { background: #FEF2F2; border-left: 4px solid #EF4444; }
+  .ok      { background: #ECFDF5; border-left: 4px solid #10B981; }
+  .box p:last-child { margin-bottom: 0; }
+  .box .t { font-weight: 700; display: block; margin-bottom: 3pt; font-size: 9pt;
+            letter-spacing: 0.4pt; text-transform: uppercase; }
+  .note .t { color: #0284C7; } .warn .t { color: #B45309; }
+  .gap  .t { color: #DC2626; } .ok   .t { color: #059669; }
+  .cover { text-align: center; padding-top: 55mm; page-break-after: always; }
+  .cover .logo { font-size: 46pt; font-weight: 800; color: #005F73; letter-spacing: 5pt; }
+  .cover .sub  { font-size: 13pt; color: #0A9396; margin-top: 2pt; letter-spacing: 1.2pt; }
+  .cover .ttl  { font-size: 19pt; margin-top: 26mm; color: #1A1E24; font-weight: 600; }
+  .cover .meta { font-size: 9.5pt; color: #64748B; margin-top: 20mm; line-height: 1.9; }
+  .cover .rule { width: 60mm; height: 3px; background: #0A9396; margin: 8mm auto; }
+  .toc { page-break-after: always; }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: p; }
+  .toc > ol > li { counter-increment: p; margin-bottom: 5pt; font-weight: 600; font-size: 10pt; }
+  .toc > ol > li:before { content: "Part " counter(p) " — "; color: #0A9396; }
+  .toc ol ol { padding-left: 14pt; margin-top: 3pt; }
+  .toc ol ol li { font-weight: 400; font-size: 9pt; color: #475569; margin-bottom: 1.5pt; }
+  .pb { page-break-before: always; }
+  .fp { font-size: 8.4pt; color: #64748B; font-style: italic; }
+  .kbd { font-family: Consolas, monospace; font-size: 8.4pt; background: #1E293B;
+         color: #E2E8F0; padding: 2px 6px; border-radius: 3px; }
+  .diag { font-family: "Cascadia Mono", Consolas, monospace; font-size: 7.6pt;
+          line-height: 1.35; background: #1E293B; color: #E2E8F0;
+          padding: 10pt; border-radius: 5px; white-space: pre; margin: 0 0 10pt;
+          page-break-inside: avoid; overflow-x: hidden; }
+  .tag { display: inline-block; font-size: 7.4pt; font-weight: 700; padding: 1px 5px;
+         border-radius: 3px; letter-spacing: 0.4pt; vertical-align: 1px; }
+  .t-real { background: #ECFDF5; color: #059669; }
+  .t-stub { background: #FEF2F2; color: #DC2626; }
+  .t-part { background: #FFFBEB; color: #B45309; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="logo">PRANA</div>
+  <div class="sub">EDGE-AI HEALTH COMPANION</div>
+  <div class="rule"></div>
+  <div class="ttl">Complete Developer &amp;<br>Hardware / AI Integration Manual</div>
+  <div class="meta">
+    Written for a reader with <b>zero prior knowledge</b> of this codebase<br>
+    Flutter 3.47.2 &nbsp;·&nbsp; Dart 3.13.2 &nbsp;·&nbsp; Android target<br>
+    Project root: <code>D:\sih_test_app_new</code><br>
+    Package name: <code>prana_health</code><br>
+    Document generated 28 August 2026
+  </div>
+</div>
+
+<div class="toc">
+<h1>Contents</h1>
+<ol>
+  <li>Read this first — the 2-minute version
+    <ol><li>1.1 What you have · 1.2 What is real vs. simulated · 1.3 The only two files that matter for integration</li></ol>
+  </li>
+  <li>What the app actually is
+    <ol><li>2.1 The product idea · 2.2 The five screens · 2.3 Why "offline-first" and "edge AI"</li></ol>
+  </li>
+  <li>Getting it running
+    <ol><li>3.1 Prerequisites · 3.2 First run · 3.3 Running on your phone · 3.4 The Gradle memory fix · 3.5 Common failures</li></ol>
+  </li>
+  <li>Project map — every folder and file
+    <ol><li>4.1 The layer cake · 4.2 File-by-file reference table</li></ol>
+  </li>
+  <li>The data pipeline, end to end
+    <ol><li>5.1 The diagram · 5.2 Walking one reading through all 6 stages · 5.3 The controller is the spine</li></ol>
+  </li>
+  <li>The data contracts (models)
+    <ol><li>6.1 HealthReading · 6.2 EnvironmentReading · 6.3 MotionReading · 6.4 DeviceInfo · 6.5 UserBaseline</li></ol>
+  </li>
+  <li>HARDWARE INTEGRATION — connecting real sensors
+    <ol><li>7.1 The seam you plug into · 7.2 Honest gap list: what is missing today · 7.3 Step 1 — add the BLE package
+    · 7.4 Step 2 — Android permissions &amp; minSdk · 7.5 Step 3 — the firmware data contract (and 3 traps that will silently eat your data)
+    · 7.6 Step 4 — the real BluetoothSensorDataSource (complete code) · 7.7 Step 5 — wire the connect flow
+    · 7.8 Step 6 — ESP32 firmware sketch · 7.9 MTU, packet size and notification rate
+    · 7.10 Alternative: standard GATT characteristics · 7.11 Where do ambient temperature and AQI come from?
+    · 7.12 Test &amp; debug checklist</li></ol>
+  </li>
+  <li>AI / ML INTEGRATION — running a real model
+    <ol><li>8.1 The seam you plug into · 8.2 The 16-feature input contract · 8.3 The 6-output contract
+    · 8.4 What the current "mock" model really is · 8.5 Step 1 — train and export a .tflite (full Python script)
+    · 8.6 Step 2 — add tflite_flutter · 8.7 Step 3 — the real TFLiteInferenceService (complete code)
+    · 8.8 Step 4 — inject it · 8.9 Verifying it works · 8.10 Performance and isolates
+    · 8.11 If you want to change behaviour without retraining</li></ol>
+  </li>
+  <li>"Where do I change X?" — master lookup table</li>
+  <li>The UI layer — structure, tokens, and how to add a screen</li>
+  <li>Known gaps and pre-demo TODO list</li>
+  <li>Glossary</li>
+</ol>
+</div>
+
+<h1>Part 1 · Read this first — the 2-minute version</h1>
+
+<h3>1.1 What you have</h3>
+<p>PRANA is a Flutter app for Android that presents itself as a health-monitoring companion paired
+with a wrist-worn sensor band. It shows heart rate, blood oxygen (SpO<sub>2</sub>), body temperature,
+motion, ambient temperature / humidity / air quality, sleep, a 0–100 personal risk score, plain-English
+recommendations, and an emergency SOS flow with fall detection.</p>
+
+<p>All of the <b>logic</b> for that is written and working: the maths, the personal-baseline learning,
+the risk scoring, the recommendation text, the fall-detection state machine, the charts, the whole UI.</p>
+
+<h3>1.2 What is real vs. simulated</h3>
+<table>
+<tr><th style="width:26%">Layer</th><th style="width:14%">Status</th><th>What that means</th></tr>
+<tr><td>UI, navigation, charts</td><td><span class="tag t-real">REAL</span></td><td>Finished. 5 destinations, custom bottom bar, hand-painted gauge and charts.</td></tr>
+<tr><td>Personal baseline learning</td><td><span class="tag t-real">REAL</span></td><td>Genuine rolling mean / standard-deviation statistics, persisted to disk.</td></tr>
+<tr><td>Risk engine + recommendations</td><td><span class="tag t-real">REAL</span></td><td>Genuine multi-domain weighted scoring with explainable drivers.</td></tr>
+<tr><td>Fall detection</td><td><span class="tag t-real">REAL</span></td><td>Genuine impact-spike-then-stillness algorithm over accelerometer magnitude.</td></tr>
+<tr><td>Local storage</td><td><span class="tag t-real">REAL</span></td><td><code>shared_preferences</code>. Nothing leaves the phone.</td></tr>
+<tr><td><b>Sensor input</b></td><td><span class="tag t-stub">SIMULATED</span></td><td>A timer generates lifelike fake vitals every 2 seconds. <b>No Bluetooth code exists yet.</b></td></tr>
+<tr><td><b>ML inference</b></td><td><span class="tag t-part">HAND-CODED</span></td><td>Six sigmoid equations written by hand in Dart. Not a trained neural network. No TensorFlow in the project.</td></tr>
+<tr><td>SOS dispatch</td><td><span class="tag t-stub">SIMULATED</span></td><td>Shows a hardcoded Delhi GPS string. Sends no SMS, makes no call, reads no real GPS.</td></tr>
+</table>
+
+<p>So your job is to replace the two <span class="tag t-stub">SIMULATED</span> / <span class="tag t-part">HAND-CODED</span>
+boxes with real ones. The good news is that the app was built with exactly that swap in mind — both are
+hidden behind an <i>interface</i>, so nothing else in the app has to change.</p>
+
+<h3>1.3 The only two files that matter for integration</h3>
+<div class="ok"><span class="t">Your two plug points</span>
+<p><b>Hardware:</b> <code>lib/features/devices/sensor_data_source.dart</code> defines an abstract class
+<code>SensorDataSource</code> with four streams. Write a class that implements it and emits real Bluetooth
+data, and the whole app instantly runs on hardware.</p>
+<p><b>AI/ML:</b> <code>lib/features/ai/inference_service.dart</code> defines an abstract class
+<code>MLInferenceService</code> with one real method, <code>runInference(List&lt;double&gt; 16 features)
+→ PredictionResult (6 probabilities)</code>. Write a class that implements it using TensorFlow Lite, and
+the whole app instantly runs on a real model.</p>
+<p>Both are injected in one place: the <code>PranaHealthController</code> constructor, called from
+<code>lib/main.dart</code>.</p>
+</div>
+
+<pre><span class="c">// lib/main.dart — this is where you swap the engine. Today:</span>
+ChangeNotifierProvider(
+  create: (_) =&gt; PranaHealthController(storage: storageService),
+)
+
+<span class="c">// After you finish Parts 7 and 8, it becomes:</span>
+ChangeNotifierProvider(
+  create: (_) =&gt; PranaHealthController(
+    storage: storageService,
+    customSensorSource: BluetoothSensorDataSource(),  <span class="c">// real band</span>
+    customMlService:    TFLiteInferenceService(),     <span class="c">// real model</span>
+  ),
+)</pre>
+
+<p class="fp">That constructor already accepts both parameters — see
+<code>lib/core/services/prana_health_controller.dart</code> lines 111–115. You do not need to modify the
+controller to inject them.</p>
+
+<h1 class="pb">Part 2 · What the app actually is</h1>
+
+<h3>2.1 The product idea</h3>
+<p>A wearable band streams biometrics to the phone over Bluetooth Low Energy. The phone — <b>without any
+internet connection</b> — learns what "normal" looks like <i>for this specific person</i>, runs a small
+neural network locally to estimate several health risks, combines that with environmental danger
+(heat, air quality), and produces one explainable number plus an action to take. If it detects a fall or
+a critical reading, it starts an SOS countdown.</p>
+
+<p>The pitch is <b>personalisation</b> plus <b>offline operation</b>. A generic app says "60–100 BPM is
+normal". PRANA says "your normal is 64–78 BPM, and you are at 92 while resting, which for you is a
++18% deviation" — and it says this in a village with no mobile data during a heatwave.</p>
+
+<h3>2.2 The five screens</h3>
+<table>
+<tr><th style="width:16%">Destination</th><th style="width:30%">File</th><th>What it shows</th></tr>
+<tr><td><b>Home</b></td><td><code>features/dashboard/dashboard_screen.dart</code></td>
+    <td>Risk gauge (0–100), the top 3 factors driving that score, the recommended action, a 2×2 grid of live vitals, an environment summary, and a scenario chip.</td></tr>
+<tr><td><b>Vitals</b></td><td><code>features/health/health_screen.dart</code></td>
+    <td>Segmented control: Heart · Oxygen · Temp · Sleep. Line charts with your learned baseline band drawn behind them. The Sleep segment embeds <code>features/sleep/sleep_screen.dart</code>.</td></tr>
+<tr><td><b>SOS</b> (centre)</td><td><code>features/emergency/emergency_screen.dart</code></td>
+    <td>Not a tab — a button that <i>navigates</i> to the emergency screen. Confirm-to-send, so a pocket mis-tap costs nothing. Handles the 10-second fall countdown.</td></tr>
+<tr><td><b>Insights</b></td><td><code>features/insights/insights_screen.dart</code></td>
+    <td>Segmented control: Analysis · Environment. Risk-domain breakdown, alert feed, and (2nd segment) <code>features/environment/environment_screen.dart</code>.</td></tr>
+<tr><td><b>Me</b></td><td><code>features/profile/profile_screen.dart</code></td>
+    <td>Profile, learned baseline values, emergency contacts, and links to <b>Device</b>, <b>Privacy</b>, and <b>Demo Lab</b>.</td></tr>
+</table>
+
+<div class="note"><span class="t">The Demo Lab is your debugging console</span>
+<p><code>lib/features/demo/demo_lab_screen.dart</code>, reached from <b>Me → Demo Lab</b>, is where every
+developer tool lives: inject one of 6 disaster scenarios, trigger a fake fall, toggle mock-vs-hardware
+mode, and — critically for you — <b>watch the live 16-number feature vector and the 6 model output
+probabilities</b>. When you wire up real hardware or a real model, this screen is how you check it is
+actually working.</p>
+</div>
+
+<h3>2.3 Why "offline-first" and "edge AI"</h3>
+<p>"Offline-first" means there is no server, no API key, no login, and no network call anywhere in the
+codebase. Persistence is <code>shared_preferences</code> (a small key–value store on the phone).
+"Edge AI" means inference happens on the phone's CPU rather than in a cloud service — which is what
+TensorFlow Lite is for, and what Part 8 sets up.</p>
+
+<h1 class="pb">Part 3 · Getting it running</h1>
+
+<h3>3.1 Prerequisites</h3>
+<ul>
+  <li>Flutter SDK 3.47.2 or newer (you have it — <code>flutter --version</code> confirms).</li>
+  <li>Android SDK with platform-tools on PATH (you have it).</li>
+  <li>An Android phone with USB debugging enabled, or an emulator.</li>
+  <li>Java 17 (the Gradle config targets JVM 17).</li>
+</ul>
+
+<h3>3.2 First run</h3>
+<pre>cd /d/sih_test_app_new
+flutter pub get          <span class="c"># download packages listed in pubspec.yaml</span>
+flutter analyze          <span class="c"># static check — should report only 2 pre-existing style infos</span>
+flutter run -d chrome    <span class="c"># fastest way to see the UI, no Android build needed</span></pre>
+
+<p>Chrome is the fastest feedback loop for UI work. It cannot do Bluetooth, so once you start Part 7 you
+must move to the phone.</p>
+
+<h3>3.3 Running on your phone</h3>
+<pre>flutter devices                       <span class="c"># find your phone's id</span>
+flutter run -d &lt;device-id&gt;            <span class="c"># hot-reload session, best for development</span>
+flutter build apk --debug             <span class="c"># produces build/app/outputs/flutter-apk/app-debug.apk</span></pre>
+
+<p>With <code>flutter run</code>, pressing <span class="kbd">r</span> hot-reloads your Dart changes in
+under a second, and <span class="kbd">R</span> does a full restart. Note that <b>hot reload does not
+re-run the constructor of <code>PranaHealthController</code></b> — so after you change which
+sensor source or ML service is injected in <code>main.dart</code>, you need a full restart
+(<span class="kbd">R</span>) or a fresh <code>flutter run</code>.</p>
+
+<h3>3.4 The Gradle memory fix (already applied)</h3>
+<div class="warn"><span class="t">Why the Android build was failing</span>
+<p><code>android/gradle.properties</code> was asking the Gradle build daemon for an <b>8 GB Java heap
+plus 4 GB metaspace</b>. On a 16 GB machine with only ~3 GB actually free, that Java process cannot
+start, so it dies instantly and the build fails with the confusing message
+<i>"A new daemon was started but could not be connected to."</i></p>
+<p>It is now set to a sane size:</p>
+</div>
+<pre><span class="c"># android/gradle.properties (current)</span>
+org.gradle.jvmargs=-Xmx2G -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=256m -XX:+HeapDumpOnOutOfMemoryError</pre>
+<p>If a build still fails to start the daemon, close memory-heavy apps (browsers, Android Studio,
+emulators) and then escalate in this order:</p>
+<pre>cd /d/sih_test_app_new/android &amp;&amp; ./gradlew --stop   <span class="c"># kill stale daemons</span>
+cd /d/sih_test_app_new &amp;&amp; flutter clean             <span class="c"># wipe build caches</span>
+<span class="c"># then, in android/gradle.properties, drop to -Xmx1536m</span>
+<span class="c"># last resort, add this line: org.gradle.daemon=false</span></pre>
+
+<h3>3.5 Common failures and what they mean</h3>
+<table>
+<tr><th style="width:44%">Message</th><th>Cause &amp; fix</th></tr>
+<tr><td><code>A new daemon was started but could not be connected to</code></td><td>Gradle heap too large for free RAM. See 3.4.</td></tr>
+<tr><td><code>Unable to load asset: assets/models/...</code></td><td>The path in code does not match the <code>assets:</code> block in <code>pubspec.yaml</code>, or you forgot <code>flutter pub get</code> after editing it.</td></tr>
+<tr><td><code>MissingPluginException</code></td><td>You added a native package (like a BLE plugin) but did not do a full restart. Stop the app completely and run <code>flutter run</code> again — hot reload cannot register new native plugins.</td></tr>
+<tr><td><code>RenderFlex overflowed by N pixels</code> in the console</td><td>A layout is too wide/tall for the screen. Yellow-black stripes appear in the UI. Fix by wrapping the offending child in <code>Expanded</code>/<code>Flexible</code>, or switching a <code>Row</code> to a <code>Wrap</code>.</td></tr>
+<tr><td>App shows no data / gauge stuck at initial value</td><td>You are in hardware mode with no band connected. Go <b>Me → Demo Lab</b> and turn <b>mock mode</b> back on.</td></tr>
+</table>
+
+<h1 class="pb">Part 4 · Project map — every folder and file</h1>
+
+<h3>4.1 The layer cake</h3>
+<p>The codebase has four layers. Data flows upward; nothing in a lower layer knows about a higher one.</p>
+
+<div class="diag">┌─────────────────────────────────────────────────────────────────────┐
+│  lib/features/*/…_screen.dart          UI — what the user sees       │
+│  lib/shared/widgets/                   reusable visual components   │
+├─────────────────────────────────────────────────────────────────────┤
+│  lib/core/services/prana_health_controller.dart                     │
+│     THE SPINE. Owns all state, runs the pipeline, notifies the UI.   │
+├─────────────────────────────────────────────────────────────────────┤
+│  lib/features/baseline/    learns your personal normal              │
+│  lib/features/ai/          feature extraction + ML inference   ◄─── │
+│  lib/features/risk/        turns predictions into a 0-100 score      │
+│  lib/features/recommendations/  turns a score into English advice    │
+│  lib/features/emergency/   fall detection + SOS state machine        │
+├─────────────────────────────────────────────────────────────────────┤
+│  lib/features/devices/     SENSOR INPUT (mock today, BLE soon) ◄──── │
+│  lib/core/database/        shared_preferences persistence            │
+│  lib/shared/models/        the data shapes everything agrees on      │
+└─────────────────────────────────────────────────────────────────────┘
+        ◄─── the two arrows are your integration points</div>
+
+<h3>4.2 File-by-file reference</h3>
+
+<h4>Entry point and shell</h4>
+<table>
+<tr><th style="width:38%">File</th><th>Responsibility</th></tr>
+<tr><td><code>lib/main.dart</code></td><td>24 lines. Initialises storage, creates the controller inside a <code>Provider</code>, launches the app. <b>Your injection point.</b></td></tr>
+<tr><td><code>lib/app/app.dart</code></td><td>The <code>MaterialApp</code> plus <code>MainNavigationShell</code>: the 4 tabs + centre SOS button, and the custom bottom bar. Also clamps system font scaling to 1.3× so big-font users don't break the layout.</td></tr>
+<tr><td><code>lib/app/routes.dart</code></td><td>Named routes: <code>/onboarding</code>, <code>/main</code>, <code>/emergency</code>, <code>/devices</code>, <code>/privacy</code>, <code>/demoLab</code>.</td></tr>
+</table>
+
+<h4>Core — configuration, theme, state, storage</h4>
+<table>
+<tr><th style="width:38%">File</th><th>Responsibility</th></tr>
+<tr><td><code>core/constants/app_constants.dart</code></td><td>All tunable numbers in one place: default baseline bounds, anomaly thresholds, SOS countdown length, fall-detection G thresholds, storage keys.</td></tr>
+<tr><td><code>core/constants/app_colors.dart</code></td><td>Every colour. Semantic names (<code>riskCritical</code>, <code>heartRate</code>, <code>spo2</code>) used at ~200 call sites.</td></tr>
+<tr><td><code>core/constants/ble_constants.dart</code></td><td><b>Bluetooth UUIDs and the target device name.</b> First file to edit for hardware.</td></tr>
+<tr><td><code>core/theme/app_typography.dart</code></td><td>The type scale: <code>displayLarge</code> … <code>labelCaps</code>, <code>metricValue</code>, <code>mono</code>.</td></tr>
+<tr><td><code>core/theme/app_spacing.dart</code></td><td>Spacing (4–32), radius (8–24 + pill), and shadow tokens. Also <code>navClearance = 108</code>, the bottom padding every scrolling screen needs so content clears the nav bar.</td></tr>
+<tr><td><code>core/theme/app_theme.dart</code></td><td>Assembles the above into a Material 3 <code>ThemeData</code>.</td></tr>
+<tr><td><code>core/services/prana_health_controller.dart</code></td><td><b>360 lines. The single most important file.</b> Owns every piece of live state, subscribes to the sensor streams, runs the 6-stage pipeline, and calls <code>notifyListeners()</code> so the UI rebuilds.</td></tr>
+<tr><td><code>core/database/local_storage_service.dart</code></td><td>Thin wrapper over <code>shared_preferences</code>: baseline, profile, onboarding flag, mock-mode flag, privacy toggles, and a full wipe.</td></tr>
+</table>
+
+<h4>Sensor input layer — <span class="tag t-stub">YOUR WORK IS HERE</span></h4>
+<table>
+<tr><th style="width:38%">File</th><th>Responsibility</th></tr>
+<tr><td><code>features/devices/sensor_data_source.dart</code></td><td><b>The interface.</b> 32 lines. Four output streams + connect/disconnect/scan/dispose. Everything above depends only on this.</td></tr>
+<tr><td><code>features/devices/mock_sensor_data_source.dart</code></td><td>261 lines. The working simulator: a 2-second timer that eases vitals toward scenario-specific targets with realistic noise. Read this to learn <b>exactly what your BLE class must emit</b>.</td></tr>
+<tr><td><code>features/devices/bluetooth_sensor_data_source.dart</code></td><td>120 lines. <b>A skeleton.</b> Has the right shape and the right stream controllers, but <code>startScanning()</code> is empty and <code>connect()</code> fakes a handshake with a 600 ms delay. You will rewrite this.</td></tr>
+<tr><td><code>features/devices/sensor_parser.dart</code></td><td>Decodes bytes into models. Has a JSON path and three standard Bluetooth GATT binary parsers (heart rate 0x2A37, SpO<sub>2</sub> 0x2A5F, thermometer 0x2A1C). Mostly reusable as-is.</td></tr>
+<tr><td><code>features/devices/ble_config.dart</code></td><td>A settings object wrapping the UUIDs so you can point at different firmware without editing constants.</td></tr>
+<tr><td><code>features/devices/device_screen.dart</code></td><td>UI: band name, connection state, battery, signal, firmware, and which sensor channels are active.</td></tr>
+</table>
+
+<h4>Intelligence layer — <span class="tag t-part">YOUR WORK IS HERE TOO</span></h4>
+<table>
+<tr><th style="width:38%">File</th><th>Responsibility</th></tr>
+<tr><td><code>features/ai/inference_service.dart</code></td><td><b>The interface.</b> 15 lines. <code>initializeModel()</code>, <code>runInference(features) → PredictionResult</code>, <code>dispose()</code>.</td></tr>
+<tr><td><code>features/ai/feature_processor.dart</code></td><td><b>93 lines. The most important file for ML.</b> Turns raw readings + baseline + environment + sleep into the normalised 16-number vector. This defines your model's input contract.</td></tr>
+<tr><td><code>features/ai/prediction_model.dart</code></td><td><code>PredictionResult</code> — the 6 output probabilities. Defines your model's output contract.</td></tr>
+<tr><td><code>features/ai/mock_inference_service.dart</code></td><td>106 lines. Six hand-written logistic (sigmoid) equations standing in for a network. Genuinely computes something sensible from the features — it is a rule model, not a trained one.</td></tr>
+<tr><td><code>features/ai/tflite_inference_service.dart</code></td><td>48 lines. <b>A stub.</b> Contains commented-out TFLite calls and currently just delegates to the mock. You will fill this in.</td></tr>
+<tr><td><code>features/baseline/baseline_service.dart</code></td><td>Learns your personal normal: rolling 200-sample buffers of resting readings, recalibrating every 20 samples to mean ± 1.645·σ (a 90% band), persisted to disk.</td></tr>
+<tr><td><code>features/risk/risk_engine.dart</code></td><td>Combines ML probabilities + baseline deviations + environment into a 0–100 score, a level (safe/moderate/high/critical), a trend, and the top 3 explainable drivers.</td></tr>
+<tr><td><code>features/recommendations/recommendation_engine.dart</code></td><td>A prioritised if/else ladder producing specific advice ("Move to shade and stop exertion") rather than platitudes.</td></tr>
+</table>
+
+<h4>Emergency, scenarios, privacy, UI kit</h4>
+<table>
+<tr><th style="width:38%">File</th><th>Responsibility</th></tr>
+<tr><td><code>features/emergency/fall_detection_service.dart</code></td><td>44 lines. Watches accelerometer magnitude: a spike above 2.8 g followed within 2 s by stillness below 0.25 g fires a fall alert.</td></tr>
+<tr><td><code>features/emergency/emergency_service.dart</code></td><td>The SOS state machine: <code>ready → countdown → sosSent</code>, cancellable, 10-second timer.</td></tr>
+<tr><td><code>features/scenarios/disaster_scenario_engine.dart</code></td><td>The <code>DisasterScenario</code> enum (normal, heatwave, air pollution, flood, cyclone, vulnerable elderly) with display names, descriptions, icons and colours.</td></tr>
+<tr><td><code>features/privacy/privacy_service.dart</code> + <code>privacy_screen.dart</code></td><td>Data-residency audit display, sharing toggles, and local data wipe.</td></tr>
+<tr><td><code>features/demo/demo_lab_screen.dart</code></td><td>451 lines. Scenario injection, fall trigger, mock toggle, <b>live ML output tensors</b>, <b>live 16-feature vector</b>, BLE UUID reference.</td></tr>
+<tr><td><code>shared/models/*.dart</code></td><td>Nine plain data classes with <code>fromJson</code>/<code>toJson</code>/<code>copyWith</code>. See Part 6.</td></tr>
+<tr><td><code>shared/widgets/*.dart</code></td><td>14 reusable components: <code>AppCard</code>, <code>InfoRow</code>, <code>StatTile</code>, <code>StatusPill</code>, <code>AppSegmentedControl</code>, <code>SectionHeader</code>, plus four hand-painted charts.</td></tr>
+</table>

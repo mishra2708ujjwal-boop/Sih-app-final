@@ -1,0 +1,417 @@
+<h1 class="pb">Part 5 · The data pipeline, end to end</h1>
+
+<h3>5.1 The diagram</h3>
+<p>This is the whole app in one picture. Every 2 seconds (or every time a real band sends a packet),
+one reading enters at the top and comes out the bottom as a number, a colour, and a sentence.</p>
+
+<div class="diag">  ┌──────────────────────────────────────────────────────────────────────┐
+  │  ①  SENSOR SOURCE            lib/features/devices/                    │
+  │      MockSensorDataSource (timer)  OR  BluetoothSensorDataSource(BLE) │
+  │      emits 4 streams: health · motion · environment · deviceStatus    │
+  └──────────────────────────────────────────────────────────────────────┘
+                                   │  HealthReading
+                                   ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  ②  BASELINE SERVICE         features/baseline/baseline_service.dart  │
+  │      records resting readings → learns YOUR normal (mean ± 1.645σ)    │
+  │      answers: hrDeviation% · spo2DropPoints · tempElevation           │
+  └──────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  ③  FEATURE PROCESSOR        features/ai/feature_processor.dart       │
+  │      health + env + sleep + baseline  ──►  List&lt;double&gt; of exactly 16│
+  │      every value normalised to roughly 0..1                           │
+  └──────────────────────────────────────────────────────────────────────┘
+                                   │  [1,16]
+                                   ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  ④  ML INFERENCE             features/ai/inference_service.dart       │
+  │      MockInferenceService (sigmoids)  OR  TFLiteInferenceService      │
+  │      returns PredictionResult: 6 probabilities                        │
+  └──────────────────────────────────────────────────────────────────────┘
+                                   │  [1,6]
+                                   ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  ⑤  RISK ENGINE              features/risk/risk_engine.dart           │
+  │      blends ML + baseline deviation + environment                     │
+  │      → score 0-100 · level · trend · top-3 drivers                    │
+  └──────────────────────────────────────────────────────────────────────┘
+                                   │  RiskResult
+                                   ▼
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  ⑥  CONTROLLER notifyListeners()  → every screen watching rebuilds    │
+  │      + RecommendationEngine → advice text                             │
+  │      + alert appended if level is high/critical                        │
+  └──────────────────────────────────────────────────────────────────────┘
+
+  In parallel, MotionReading ──► FallDetectionService ──► EmergencyService
+                                 (2.8 g spike + stillness)  (10 s countdown)</div>
+
+<h3>5.2 Walking one reading through all six stages</h3>
+<p>Here is the actual code, from
+<code>lib/core/services/prana_health_controller.dart</code>. This one method
+<i>is</i> the pipeline — read it once and you understand the app.</p>
+
+<pre>Future&lt;void&gt; _onHealthReadingReceived(HealthReading reading) async {
+  _currentHealth = reading;
+
+  <span class="c">// ① buffer for the charts — keep the last 50 points only</span>
+  _hrHistory.add(reading.heartRate);
+  _spo2History.add(reading.spo2);
+  _tempHistory.add(reading.bodyTemperature);
+  if (_hrHistory.length &gt; 50) _hrHistory.removeAt(0);
+  <span class="c">// … same for the other two …</span>
+
+  <span class="c">// ② teach the baseline service, then ask it how abnormal this is FOR ME</span>
+  baselineService.recordReading(reading);
+  final hrDev     = baselineService.getHrDeviationPercent(reading.heartRate);
+  final spo2Drop  = baselineService.getSpo2DropPoints(reading.spo2);
+  final tempElev  = baselineService.getTempElevation(reading.bodyTemperature);
+
+  <span class="c">// ③ build the 16-number vector the model expects</span>
+  final features = FeatureProcessor.extractFeatureVector(
+    health:       reading,
+    environment:  _currentEnvironment,
+    baseline:     baselineService.currentBaseline,
+    sleep:        _currentSleep,
+    hrTrendSlope: _computeHrTrendSlope(),
+  );
+  _lastFeatureVector = features;   <span class="c">// Demo Lab displays this</span>
+
+  <span class="c">// ④ run the model  ← YOUR TFLITE CALL ENDS UP HERE</span>
+  _lastPrediction = await mlService.runInference(features);
+
+  <span class="c">// ⑤ turn probabilities into one explainable score</span>
+  _currentRisk = riskEngine.calculateRisk(
+    prediction: _lastPrediction,
+    health: reading, environment: _currentEnvironment,
+    hrDeviationPercent: hrDev, spo2DropPoints: spo2Drop,
+    tempElevation: tempElev,
+  );
+
+  <span class="c">// ⑥ raise an alert if warranted, then repaint the UI</span>
+  if (_currentRisk.level == RiskLevel.high ||
+      _currentRisk.level == RiskLevel.critical) {
+    _appendAlert(_currentRisk);
+  }
+  notifyListeners();
+}</pre>
+
+<div class="note"><span class="t">What <code>notifyListeners()</code> does</span>
+<p>The controller is a <code>ChangeNotifier</code>. Screens read it with
+<code>context.watch&lt;PranaHealthController&gt;()</code>. Calling <code>notifyListeners()</code>
+tells Flutter "my data changed" and every watching widget rebuilds. That is the entire
+UI-update mechanism — there is no other. So <b>if your new data isn't showing up on screen, the
+question is always "did a <code>notifyListeners()</code> happen after I set the value?"</b></p>
+</div>
+
+<h3>5.3 The controller is the spine</h3>
+<p>Stream subscriptions are set up once in <code>_bindStreams()</code>:</p>
+
+<pre>void _bindStreams() {
+  _healthSub?.cancel();  <span class="c">// cancel old ones first — critical when swapping sources</span>
+  <span class="c">// …</span>
+  _healthSub      = _sensorSource.healthStream.listen(_onHealthReadingReceived);
+  _motionSub      = _sensorSource.motionStream.listen(_onMotionReadingReceived);
+  _environmentSub = _sensorSource.environmentStream.listen(_onEnvironmentReceived);
+  _deviceSub      = _sensorSource.deviceStatusStream.listen((d) {
+                      _currentDevice = d; notifyListeners();
+                    });
+  fallDetectionService.fallAlertStream.listen((_) {
+    emergencyService.triggerFallDetected();
+    notifyListeners();
+  });
+}</pre>
+
+<p>State the controller exposes to the UI (all read-only getters):</p>
+<table>
+<tr><th style="width:34%">Getter</th><th>Used by</th></tr>
+<tr><td><code>currentHealth</code>, <code>currentEnvironment</code>, <code>currentMotion</code>, <code>currentSleep</code>, <code>currentDevice</code></td><td>Every metric card and the Device screen</td></tr>
+<tr><td><code>currentRisk</code></td><td>The Home gauge, driver bars, Insights breakdown</td></tr>
+<tr><td><code>hrHistory</code>, <code>spo2History</code>, <code>tempHistory</code></td><td>The line charts on Vitals</td></tr>
+<tr><td><code>lastPrediction</code>, <code>lastFeatureVector</code></td><td><b>Demo Lab — your verification window</b></td></tr>
+<tr><td><code>alerts</code>, <code>activeScenario</code>, <code>isMockMode</code>, <code>userProfile</code></td><td>Insights feed, scenario chip, Demo Lab, Me</td></tr>
+</table>
+
+<p>Command methods the UI calls back into:</p>
+<pre>controller.setScenario(DisasterScenario.severeHeatwave);  <span class="c">// Demo Lab</span>
+controller.triggerTestFall();                             <span class="c">// Demo Lab</span>
+controller.toggleMockMode(false);                         <span class="c">// switch to hardware</span>
+controller.startScan();  /  connectToDevice(id);          <span class="c">// Device screen</span>
+controller.updateProfile(profile);                        <span class="c">// Me</span></pre>
+
+<h1 class="pb">Part 6 · The data contracts (models)</h1>
+
+<p>Everything in <code>lib/shared/models/</code>. These are the shapes your hardware must produce.
+Each has a <code>fromJson</code> constructor — <b>the exact key names below are what your firmware
+must send.</b> Get a key name wrong and that field silently falls back to its default.</p>
+
+<h3>6.1 HealthReading — <code>shared/models/health_reading.dart</code></h3>
+<table>
+<tr><th style="width:23%">Field</th><th style="width:13%">Type</th><th style="width:22%">JSON key</th><th>Meaning / units</th></tr>
+<tr><td>heartRate</td><td>double</td><td><code>heartRate</code></td><td>BPM. Realistic 45–180.</td></tr>
+<tr><td>spo2</td><td>double</td><td><code>spo2</code></td><td>Blood-oxygen %, 80–100.</td></tr>
+<tr><td>bodyTemperature</td><td>double</td><td><code>bodyTemperature</code></td><td><b>°C, wrist/skin.</b> Note the key is <i>not</i> "temperature".</td></tr>
+<tr><td>activityLevel</td><td>String</td><td><code>activityLevel</code></td><td>One of <code>Resting</code> / <code>Low</code> / <code>Moderate</code> / <code>High</code>. Case-insensitive matching downstream.</td></tr>
+<tr><td>steps</td><td>int</td><td><code>steps</code></td><td>Cumulative step count.</td></tr>
+<tr><td>restingHeartRate</td><td>double</td><td><code>restingHeartRate</code></td><td>BPM.</td></tr>
+<tr><td>hrvRmssd</td><td>double</td><td><code>hrvRmssd</code></td><td>Heart-rate variability, milliseconds. Higher = better recovery.</td></tr>
+<tr><td>timestamp</td><td>DateTime</td><td><code>timestamp</code></td><td><b>Must be an ISO-8601 string, or omitted entirely.</b> See the trap in 7.5.</td></tr>
+</table>
+
+<h3>6.2 EnvironmentReading — <code>shared/models/environment_reading.dart</code></h3>
+<table>
+<tr><th style="width:23%">Field</th><th style="width:13%">Type</th><th style="width:22%">JSON key</th><th>Meaning / units</th></tr>
+<tr><td>temperature</td><td>double</td><td><code>temperature</code></td><td><b>Ambient air °C.</b> Different key from body temp — both can live in one flat packet.</td></tr>
+<tr><td>humidity</td><td>double</td><td><code>humidity</code></td><td>Relative humidity %.</td></tr>
+<tr><td>aqi</td><td>int</td><td><code>aqi</code></td><td>Air Quality Index, 0–500.</td></tr>
+<tr><td>heatExposureHours</td><td>double</td><td><code>heatExposureHours</code></td><td>Hours in heat today. No sensor produces this — see 7.11.</td></tr>
+<tr><td>heatIndex</td><td colspan="2">computed getter</td><td>Apparent "feels-like" temperature from temp + humidity. Not sent by firmware.</td></tr>
+</table>
+
+<h3>6.3 MotionReading — <code>shared/models/motion_reading.dart</code></h3>
+<table>
+<tr><th style="width:23%">Field</th><th style="width:13%">Type</th><th style="width:22%">JSON key</th><th>Meaning / units</th></tr>
+<tr><td>accX / accY / accZ</td><td>double</td><td><code>accX</code>/<code>accY</code>/<code>accZ</code></td><td>Acceleration in <b>g</b> (1 g = 9.81 m/s²). At rest, one axis reads ≈1.0 and the others ≈0.</td></tr>
+<tr><td>vectorMagnitude</td><td colspan="2">computed getter</td><td><code>sqrt(x²+y²+z²)</code>. This is what fall detection watches.</td></tr>
+<tr><td>isFallSuspected</td><td>bool</td><td><code>isFallSuspected</code></td><td>Optional firmware-side hint. If <code>true</code>, the app fires a fall alert immediately without waiting for its own algorithm.</td></tr>
+</table>
+
+<h3>6.4 DeviceInfo — <code>shared/models/device_info.dart</code></h3>
+<p>Fields: <code>id</code>, <code>name</code>, <code>connectionState</code>
+(<code>disconnected</code>/<code>scanning</code>/<code>connecting</code>/<code>connected</code>/<code>error</code>),
+<code>batteryLevel</code> (int %), <code>rssi</code> (int dBm — signal strength, −30 is excellent,
+−90 is poor), <code>firmwareVersion</code>, and four booleans
+<code>isHeartRateActive</code> / <code>isSpo2Active</code> / <code>isTemperatureActive</code> / <code>isMotionActive</code>.</p>
+
+<div class="gap"><span class="t">Gap to fix later</span>
+<p><code>DeviceInfo.defaultDevice()</code> hardcodes <code>batteryLevel: 88</code> and
+<code>rssi: -58</code>. Until you push real values into <code>deviceStatusStream</code>, the Device
+screen will always show 88% battery and −58 dBm even with a real band attached. Part 7.6 shows how to
+emit the real ones.</p>
+</div>
+
+<h3>6.5 UserBaseline — <code>shared/models/user_baseline.dart</code></h3>
+<p>The learned personal normal, persisted to disk:
+<code>normalHrMin</code>, <code>normalHrMax</code>, <code>normalSpo2Min</code>,
+<code>normalTempMin</code>, <code>normalTempMax</code>, <code>normalHrvMin</code>,
+<code>sampleCount</code>, <code>lastCalibrated</code>, and <code>isCalibrated</code>
+(<code>true</code> once <code>sampleCount ≥ 20</code>). Defaults come from
+<code>AppConstants</code>: HR 60–100, SpO<sub>2</sub> min 95, temp 36.1–37.2, HRV min 20.</p>
+
+<p>How it learns, from <code>features/baseline/baseline_service.dart</code>:</p>
+<ul>
+  <li>Only readings whose <code>activityLevel</code> contains "rest" or "low" are recorded — you don't
+      want a sprint polluting your resting normal.</li>
+  <li>Rolling buffers capped at 200 samples.</li>
+  <li>Every 20 samples it recalibrates: <code>mean ± max(8.0, 1.645 × stdDev)</code> for HR
+      (then floored at 48 and ceiled at 110 for safety), and analogous bands for SpO<sub>2</sub> and temperature.</li>
+  <li>1.645 standard deviations is the 90% two-sided confidence band — i.e. "90% of your resting
+      readings fall in here".</li>
+</ul>
+
+<div class="note"><span class="t">Practical consequence for hardware testing</span>
+<p>When you first connect a real band, the baseline is still the generic default (HR 60–100) and
+<code>isCalibrated</code> is <code>false</code>. It takes 20 resting readings to calibrate. If your
+firmware never sets <code>activityLevel</code> to "Resting" or "Low", <b>the baseline will never
+calibrate</b> and every deviation number will be measured against the generic default. Send
+<code>"activityLevel": "Resting"</code> when the wearer is still.</p>
+</div>
+
+<h1 class="pb">Part 7 · HARDWARE INTEGRATION — connecting real sensors</h1>
+
+<p>This is the part you asked for most. By the end of it, a real band will be streaming into the app
+and the Home screen will show live temperature, SpO<sub>2</sub> and heart rate.</p>
+
+<h3>7.1 The seam you plug into</h3>
+<p>Here is the entire interface, <code>lib/features/devices/sensor_data_source.dart</code>. Anything
+that satisfies this contract can drive the whole app:</p>
+
+<pre>abstract class SensorDataSource {
+  Stream&lt;HealthReading&gt;      get healthStream;
+  Stream&lt;MotionReading&gt;      get motionStream;
+  Stream&lt;EnvironmentReading&gt; get environmentStream;
+  Stream&lt;DeviceInfo&gt;         get deviceStatusStream;
+
+  Future&lt;void&gt; connect(String deviceId);
+  Future&lt;void&gt; disconnect();
+  Future&lt;void&gt; startScanning();
+  Future&lt;void&gt; stopScanning();
+  void dispose();
+}</pre>
+
+<p>A "Stream" in Dart is a pipe you push values into and someone else listens to. You create one with
+a <code>StreamController</code>: <code>_controller.add(value)</code> pushes,
+<code>_controller.stream</code> is the read end. Use <code>.broadcast()</code> so multiple listeners
+are allowed.</p>
+
+<h3>7.2 Honest gap list — what is missing today</h3>
+<p>Do not skip this table. These are the eleven things that will actually bite you, in the order they
+will bite.</p>
+
+<table>
+<tr><th style="width:5%">#</th><th style="width:32%">Gap</th><th>Consequence &amp; where it is fixed below</th></tr>
+<tr><td>1</td><td>No Bluetooth package in <code>pubspec.yaml</code></td><td>There is literally no BLE code in the project. Fixed in <b>7.3</b>.</td></tr>
+<tr><td>2</td><td><code>AndroidManifest.xml</code> has <b>zero</b> permission entries</td><td>Scanning silently returns no devices on Android 12+. Fixed in <b>7.4</b>.</td></tr>
+<tr><td>3</td><td><code>connect()</code> fakes a handshake with <code>Future.delayed(600ms)</code></td><td>The UI shows "connected" while nothing is connected. Fixed in <b>7.6</b>.</td></tr>
+<tr><td>4</td><td><code>startScanning()</code> / <code>stopScanning()</code> are empty method bodies</td><td>The Device screen's scan button does nothing. Fixed in <b>7.6</b>.</td></tr>
+<tr><td>5</td><td><code>onTelemetryPacketReceived()</code> exists but <b>nothing ever calls it</b></td><td>The parsing path is written and correct — it just has no data feeding it. Fixed in <b>7.6</b>.</td></tr>
+<tr><td>6</td><td><code>toggleMockMode(false)</code> swaps in the BLE source and rebinds streams, but never calls <code>startScanning()</code> or <code>connect()</code></td><td><b>Turning off mock mode today gives you a frozen, empty app.</b> Fixed in <b>7.7</b>.</td></tr>
+<tr><td>7</td><td>The example JSON in <code>sensor_parser.dart</code>'s doc comment does <b>not match</b> the real model keys</td><td>Copying that example gives you defaults for every field. Correct contract in <b>7.5</b>.</td></tr>
+<tr><td>8</td><td><code>timestamp</code> parsing + a bare <code>catch (_) {}</code></td><td>An epoch-integer timestamp throws, the empty catch swallows it, and <b>the whole packet vanishes with no error message.</b> See <b>7.5</b>.</td></tr>
+<tr><td>9</td><td><code>DeviceInfo.defaultDevice()</code> hardcodes battery 88% / RSSI −58</td><td>Real battery and signal never surface. Fixed in <b>7.6</b>.</td></tr>
+<tr><td>10</td><td>Default BLE packet limit is 20 bytes; the JSON contract is ~250 bytes</td><td>Packets arrive truncated → invalid JSON → silently dropped. Fixed in <b>7.6</b> via <code>requestMtu</code>.</td></tr>
+<tr><td>11</td><td>Every reading <code>await</code>s inference then repaints the UI</td><td>Fine at 0.5 Hz. At 10 Hz+ you must throttle. See <b>7.9</b>.</td></tr>
+</table>
+
+<h3>7.3 Step 1 — add the BLE package</h3>
+<p>Open <code>pubspec.yaml</code> and add two lines under <code>dependencies:</code>. Keep the existing
+indentation (two spaces).</p>
+
+<pre>dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  intl: ^0.19.0
+  flutter_blue_plus: ^1.32.12      <span class="c"># ← ADD: Bluetooth Low Energy</span>
+  permission_handler: ^11.3.1      <span class="c"># ← ADD: runtime permission prompts</span></pre>
+
+<p>Then, in a terminal at the project root:</p>
+<pre>cd /d/sih_test_app_new
+flutter pub get</pre>
+
+<div class="warn"><span class="t">You must fully restart, not hot-reload</span>
+<p><code>flutter_blue_plus</code> contains native Android code. Hot reload cannot load native plugins.
+Stop the app entirely and run <code>flutter run -d &lt;your-phone&gt;</code> again, otherwise you get
+<code>MissingPluginException</code>.</p>
+</div>
+
+<h3>7.4 Step 2 — Android permissions and minSdk</h3>
+
+<p><b>File:</b> <code>android/app/src/main/AndroidManifest.xml</code>. Add the permission block
+<i>above</i> the <code>&lt;application&gt;</code> tag. Right now this file has none at all.</p>
+
+<pre>&lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+
+    <span class="c">&lt;!-- ===== Android 12 (API 31) and newer ===== --&gt;</span>
+    &lt;uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+                     android:usesPermissionFlags="neverForLocation" /&gt;
+    &lt;uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /&gt;
+
+    <span class="c">&lt;!-- ===== Android 11 (API 30) and older ===== --&gt;</span>
+    &lt;uses-permission android:name="android.permission.BLUETOOTH"
+                     android:maxSdkVersion="30" /&gt;
+    &lt;uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+                     android:maxSdkVersion="30" /&gt;
+    &lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+                     android:maxSdkVersion="30" /&gt;
+
+    <span class="c">&lt;!-- Declares the app uses BLE. required=false lets non-BLE phones install it. --&gt;</span>
+    &lt;uses-feature android:name="android.hardware.bluetooth_le"
+                  android:required="false" /&gt;
+
+    &lt;application
+        android:label="PRANA"          <span class="c">&lt;!-- was "sih_test_app_new" --&gt;</span>
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"&gt;
+        <span class="c">&lt;!-- … leave the rest of the file untouched … --&gt;</span></pre>
+
+<p><b>Why <code>neverForLocation</code>:</b> since Android 12, Bluetooth scanning can theoretically be
+used to infer your location, so Google requires you to either request location permission or explicitly
+declare that you will not derive location from scan results. Declaring <code>neverForLocation</code>
+is the honest and much less intrusive choice here.</p>
+
+<p><b>File:</b> <code>android/app/build.gradle.kts</code>. <code>flutter_blue_plus</code> requires
+API 23+. Pin it explicitly rather than inheriting:</p>
+<pre>defaultConfig {
+    applicationId = "com.example.sih_test_app_new"
+    minSdk = 23                      <span class="c">// ← was: flutter.minSdkVersion</span>
+    targetSdk = flutter.targetSdkVersion
+    versionCode = flutter.versionCode
+    versionName = flutter.versionName
+}</pre>
+
+<p>Finally, permissions declared in the manifest are not automatically granted — on Android 6+ you must
+also ask at runtime. Add this helper and call it before your first scan:</p>
+
+<pre><span class="c">// lib/features/devices/ble_permissions.dart  (new file)</span>
+import 'package:permission_handler/permission_handler.dart';
+
+class BlePermissions {
+  <span class="c">/// Returns true only if we may scan AND connect. Call before startScanning().</span>
+  static Future&lt;bool&gt; request() async {
+    final result = await [
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+      Permission.locationWhenInUse,   <span class="c">// needed on Android ≤ 11 only</span>
+    ].request();
+
+    <span class="c">// locationWhenInUse may be permanently denied on Android 12+ and that is fine,</span>
+    <span class="c">// so only the two bluetooth grants are mandatory.</span>
+    return result[Permission.bluetoothScan]?.isGranted == true &amp;&amp;
+           result[Permission.bluetoothConnect]?.isGranted == true;
+  }
+}</pre>
+
+<h3>7.5 Step 3 — the firmware data contract, and three traps</h3>
+
+<p>Your band should send <b>one JSON object per packet</b>, UTF-8 encoded, over a single BLE notify
+characteristic. This is the exact contract, derived from the <code>fromJson</code> methods of the three
+models — not from the doc comment in <code>sensor_parser.dart</code>, which is wrong:</p>
+
+<pre>{
+  "heartRate":        82.5,        <span class="c">// BPM        → HealthReading</span>
+  "spo2":             97.2,        <span class="c">// %          → HealthReading</span>
+  "bodyTemperature":  36.85,       <span class="c">// °C wrist   → HealthReading  ★ not "temperature"</span>
+  "activityLevel":    "Moderate",  <span class="c">// Resting|Low|Moderate|High</span>
+  "steps":            4120,        <span class="c">// int</span>
+  "restingHeartRate": 68.0,        <span class="c">// BPM</span>
+  "hrvRmssd":         45.0,        <span class="c">// ms</span>
+
+  "accX":             0.08,        <span class="c">// g          → MotionReading</span>
+  "accY":             0.14,
+  "accZ":             0.98,
+  "isFallSuspected":  false,       <span class="c">// bool, optional firmware hint</span>
+
+  "temperature":      31.2,        <span class="c">// °C ambient → EnvironmentReading ★ different key!</span>
+  "humidity":         54.0,        <span class="c">// %RH</span>
+  "aqi":              48,          <span class="c">// int 0-500</span>
+  "heatExposureHours": 1.5         <span class="c">// see 7.11</span>
+}</pre>
+
+<div class="gap"><span class="t">Trap 1 — two different temperature keys</span>
+<p>Body temperature is <code>"bodyTemperature"</code>. Ambient temperature is
+<code>"temperature"</code>. They coexist in the same flat packet because three different models each
+pick out the keys they care about. Sending only <code>"temperature"</code> means the body-temp card
+silently shows the default 36.8 °C forever while the environment card works — a bug that looks like
+"the thermistor is broken".</p>
+</div>
+
+<div class="gap"><span class="t">Trap 2 — timestamp will destroy your packet</span>
+<p>All three models do <code>DateTime.parse(json['timestamp'] as String)</code>. If your firmware sends
+<code>"timestamp": 1724784000000</code> (a Unix epoch integer, which is the natural thing to send),
+that cast throws. And because <code>onTelemetryPacketReceived</code> wraps everything in
+<code>catch (_) {}</code>, the exception is swallowed and <b>the entire packet is discarded with no log
+line, no error, nothing.</b> The app just looks frozen.</p>
+<p><b>Either</b> omit <code>timestamp</code> entirely (the models default to
+<code>DateTime.now()</code>, which is what you want anyway — the phone's clock is more trustworthy than
+a microcontroller's) <b>or</b> send ISO-8601: <code>"2026-08-28T14:30:05Z"</code>.
+Recommendation: omit it.</p>
+</div>
+
+<div class="gap"><span class="t">Trap 3 — the silent catch, in general</span>
+<p>While you are bringing hardware up, make the failure loud. Change the catch in
+<code>bluetooth_sensor_data_source.dart</code> to actually print:</p>
+<pre>} catch (e, st) {
+  <span class="c">// During bring-up you NEED to see malformed packets, not swallow them.</span>
+  debugPrint('[PRANA/BLE] dropped packet: $e');
+  debugPrint('$st');
+}</pre>
+<p>This single change will save you hours. A dropped packet is invisible otherwise.</p>
+</div>
+
+<p>The packet above is ~250 bytes. Keep it under ~180 bytes if you can by dropping fields your hardware
+doesn't measure — every omitted key just falls back to a sensible default. A minimal useful packet is:</p>
+<pre>{"heartRate":82.5,"spo2":97.2,"bodyTemperature":36.85,"activityLevel":"Resting"}</pre>

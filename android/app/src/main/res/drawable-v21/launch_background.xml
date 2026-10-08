@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Native launch window (API 21+) shown while the Flutter engine boots. Kept
+     pure black so it flows seamlessly into the app's animated black splash
+     screen — no white flash between the OS window and the first Flutter frame. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/black" />
+
+    <!-- Brand mark, centred, shown while the process starts. -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@mipmap/ic_launcher" />
+    </item>
+</layer-list>

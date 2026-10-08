@@ -1,0 +1,104 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- ====================================================================== -->
+    <!-- 1. BLUETOOTH PERMISSIONS (REQUIRED TO CONNECT TO ESP32)                -->
+    <!-- ====================================================================== -->
+    
+    <!-- Standard Bluetooth permissions for older Android versions (Android 11 and below). -->
+    <!-- Allows the app to connect to paired Bluetooth devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    
+    <!-- Allows the app to discover and pair new Bluetooth devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    
+    <!-- Android requires Location permissions to scan for Bluetooth devices on older Android versions. -->
+    <!-- This is because Bluetooth beacons could theoretically be used to track a user's location. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <!-- New Bluetooth permissions for modern devices (Android 12 and higher). -->
+    <!-- BLUETOOTH_SCAN allows the app to look for your ESP32. -->
+    <!-- 'neverForLocation' tells the phone we are just connecting to a sensor, not tracking the user. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+    
+    <!-- BLUETOOTH_CONNECT allows the app to actually establish the data connection with the ESP32. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- ====================================================================== -->
+    <!-- 1b. EMERGENCY DISPATCH PERMISSIONS (FALL -> SMS + CALL + GPS)          -->
+    <!-- ====================================================================== -->
+    <!-- On a detected fall (after the cancel countdown) the app silently texts  -->
+    <!-- and auto-dials the primary emergency contact with the user's exact GPS  -->
+    <!-- location. SEND_SMS lets it send the alert SMS without opening the        -->
+    <!-- messaging app; CALL_PHONE lets it place the call without the user having -->
+    <!-- to press dial. Location is already granted above (ACCESS_FINE_LOCATION). -->
+    <!-- These are handled by the native prana/emergency MethodChannel.          -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <!-- ====================================================================== -->
+    <!-- 2. APPLICATION CONFIGURATION                                           -->
+    <!-- ====================================================================== -->
+    <application
+        android:label="PRANA"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+        
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            
+            <!-- Specifies the theme visible while the Flutter UI initializes. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+              
+            <!-- Tells the Android operating system that this is the main entry point of your app. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        
+        <!-- Used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- ================================================================== -->
+        <!-- FILE SHARING (DOCTOR REPORT PDF)                                   -->
+        <!-- ================================================================== -->
+        <!-- Lets the app hand the generated PDF to other apps (WhatsApp, Gmail, -->
+        <!-- Drive, a PDF viewer) via a content:// URI. Uses androidx.core's     -->
+        <!-- FileProvider, which is already on the classpath. The prana/files    -->
+        <!-- MethodChannel in MainActivity issues the ACTION_SEND / ACTION_VIEW. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+    
+    <!-- ====================================================================== -->
+    <!-- 3. INTENT QUERIES (FLUTTER ENGINE REQUIREMENTS)                        -->
+    <!-- ====================================================================== -->
+    <!-- Required to query activities that can process text. -->
+    <!-- Used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>

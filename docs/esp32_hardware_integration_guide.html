@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PRANA — Complete ESP32 Hardware & BLE Integration Guide</title>
+<style>
+  @page { 
+    size: A4; 
+    margin: 18mm 16mm 20mm 16mm; 
+    @bottom-right {
+      content: counter(page);
+      font-family: "Segoe UI", sans-serif;
+      font-size: 8pt;
+      color: #64748B;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 9.5pt; 
+    line-height: 1.55; 
+    color: #1A1E24; 
+    margin: 0;
+    -webkit-print-color-adjust: exact; 
+    print-color-adjust: exact;
+  }
+  h1 { font-size: 20pt; color: #005F73; margin: 0 0 4pt; letter-spacing: -0.4pt; }
+  h2 {
+    font-size: 14pt; color: #005F73; margin: 22pt 0 8pt;
+    padding-bottom: 4pt; border-bottom: 2px solid #0A9396; page-break-after: avoid;
+  }
+  h3 { font-size: 11pt; color: #003844; margin: 14pt 0 5pt; page-break-after: avoid; }
+  p { margin: 0 0 7pt; }
+  ul, ol { margin: 0 0 8pt; padding-left: 18pt; }
+  li { margin-bottom: 3pt; }
+  code {
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 8.5pt; background: #F1F5F9; padding: 1px 4px;
+    border-radius: 3px; color: #003844;
+  }
+  pre {
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 8pt; line-height: 1.4; background: #F8FAFC;
+    border: 1px solid #E8EDF3; border-left: 3.5pt solid #0A9396;
+    border-radius: 4px; padding: 8pt 10pt; overflow-wrap: break-word;
+    white-space: pre-wrap; margin: 0 0 9pt; page-break-inside: avoid;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 10pt; font-size: 8.5pt; page-break-inside: avoid; }
+  th { background: #005F73; color: #fff; text-align: left; padding: 5pt 6pt; font-weight: 600; }
+  td { border-bottom: 1px solid #E8EDF3; padding: 4.5pt 6pt; vertical-align: top; }
+  tr:nth-child(even) td { background: #F8FAFC; }
+  .box {
+    background: #E8F4F8; border-left: 3.5pt solid #005F73;
+    padding: 8pt 10pt; margin: 0 0 10pt; border-radius: 0 4px 4px 0;
+    page-break-inside: avoid;
+  }
+  .box-title { font-weight: 700; color: #005F73; margin-bottom: 3pt; }
+  .diag {
+    background: #0F172A; color: #38BDF8; padding: 10pt;
+    font-family: "Cascadia Mono", Consolas, monospace; font-size: 7.8pt;
+    line-height: 1.35; border-radius: 4px; margin: 0 0 10pt; white-space: pre;
+    page-break-inside: avoid;
+  }
+  .badge {
+    display: inline-block; padding: 2px 6pt; font-size: 7.5pt;
+    font-weight: 700; border-radius: 3px; text-transform: uppercase;
+  }
+  .badge-primary { background: #005F73; color: #fff; }
+  .badge-accent { background: #0A9396; color: #fff; }
+  .badge-warning { background: #EE9B00; color: #fff; }
+  .pb { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>PRANA &middot; Complete ESP32 &amp; Hardware Integration Guide</h1>
+<p style="color: #64748B; font-size: 9pt; margin-bottom: 14pt;">
+  Step-by-step developer manual for connecting custom ESP32/nRF/Arduino hardware sensors to the PRANA Flutter App.
+</p>
+
+<div class="box">
+  <div class="box-title">Summary for Beginners</div>
+  You do not need to rewrite the app to connect real hardware. The app already contains a full Bluetooth Low Energy (BLE) engine. You only need to configure <strong>three core files</strong> in Flutter and flash the provided <strong>C++ firmware</strong> onto your ESP32.
+</div>
+
+<h2>1. The End-to-End Hardware Data Pipeline</h2>
+
+<div class="diag">
+┌────────────────────────────────────────────────────────────────────────┐
+│ 1. HARDWARE SENSORS (ESP32 Wearable)                                    │
+│    MAX30102 (HR/SpO2) + MPU6050 (IMU) + DHT11 (Temp/Humidity)           │
+│    Microcontroller packs data into JSON and sends via BLE Notify       │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ BLE GATT Notify (UUID: beb5483e...)
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 2. BLE LISTENER: lib/features/devices/bluetooth_sensor_data_source.dart │
+│    Discovers PRANA_BAND_PRO, connects, requests 256-byte MTU, listens  │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Raw UTF-8 Bytes
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 3. SENSOR PARSER: lib/features/devices/sensor_parser.dart               │
+│    Decodes JSON string into HealthReading, MotionReading, EnvReading   │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Emits on broadcast Streams
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 4. CONTROLLER: lib/core/services/prana_health_controller.dart          │
+│    Updates live UI metrics, updates historical charts, triggers AI     │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ State Notification
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 5. USER INTERFACE (Dashboard, Health, Risk, Emergency Alerting)        │
+└────────────────────────────────────────────────────────────────────────┘
+</div>
+
+<h2>2. Exactly Where to Make Changes in the Code</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>File Path</th>
+      <th>Section / What to Change</th>
+      <th>Why You Change It</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>lib/core/constants/ble_constants.dart</code></td>
+      <td><code>targetDeviceName</code>, <code>serviceUuid</code>, <code>telemetryStreamCharacteristicUuid</code></td>
+      <td>Matches the BLE Name and UUIDs advertised by your ESP32 board.</td>
+    </tr>
+    <tr>
+      <td><code>lib/features/devices/sensor_parser.dart</code></td>
+      <td><code>parseJsonTelemetry()</code>, <code>toHealthReading()</code></td>
+      <td>Add or modify custom sensor fields sent from hardware.</td>
+    </tr>
+    <tr>
+      <td><code>lib/shared/models/health_reading.dart</code></td>
+      <td>Class fields &amp; <code>fromJson()</code></td>
+      <td>Add new health parameters (e.g. ECG, GSR Stress, Blood Pressure).</td>
+    </tr>
+    <tr>
+      <td><code>lib/core/services/prana_health_controller.dart</code></td>
+      <td><code>_onHealthReadingReceived()</code></td>
+      <td>Directs incoming sensor metrics to UI variables and charts.</td>
+    </tr>
+    <tr>
+      <td><code>android/app/src/main/AndroidManifest.xml</code></td>
+      <td>Bluetooth &amp; Location Permissions</td>
+      <td>Allows Android to discover and connect to BLE devices (already configured).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 class="pb">3. Code Walkthrough: File by File</h2>
+
+<h3>Step 3.1 &mdash; Configure Device Name &amp; UUIDs</h3>
+<p>Open <code>lib/core/constants/ble_constants.dart</code>:</p>
+<pre><code>class BleConstants {
+  BleConstants._();
+
+  // Change this to whatever name you programmed on your ESP32
+  static const String targetDeviceName = 'PRANA_BAND_PRO';
+  static const String fallbackDevicePrefix = 'PRANA_';
+
+  // Primary Health Service UUID
+  static const String serviceUuid = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+
+  // JSON Telemetry Stream Characteristic UUID
+  static const String telemetryStreamCharacteristicUuid = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+
+  // Scan and connect timeouts
+  static const int scanTimeoutSeconds = 12;
+  static const int connectionTimeoutSeconds = 10;
+}</code></pre>
+
+<h3>Step 3.2 &mdash; Parse JSON Sensor Payloads</h3>
+<p>Open <code>lib/features/devices/sensor_parser.dart</code>:</p>
+<pre><code>// The app accepts structured JSON packets sent from ESP32:
+static Map&lt;String, dynamic&gt;? parseJsonTelemetry(String rawString) {
+  try {
+    final decoded = jsonDecode(rawString) as Map&lt;String, dynamic&gt;;
+    return decoded;
+  } catch (_) {
+    return null; // Gracefully handles corrupted frames
+  }
+}</code></pre>
+
+<h3>Step 3.3 &mdash; Switch Between Live BLE Mode and Simulator Mode</h3>
+<p>Open the app &rarr; Navigate to <strong>Devices Screen</strong> (<code>lib/features/devices/device_screen.dart</code>).
+Toggle the <strong>Live Hardware Mode</strong> switch. The app switches from <code>MockSensorDataSource</code> to <code>BluetoothSensorDataSource</code> and starts scanning for your ESP32.</p>
+
+<h2 class="pb">4. Ready-to-Flash ESP32 Firmware (Arduino C++)</h2>
+<p>Flash this sketch using the Arduino IDE with the <strong>ArduinoJson</strong> library installed:</p>
+
+<pre><code>#include &lt;BLEDevice.h&gt;
+#include &lt;BLEServer.h&gt;
+#include &lt;BLEUtils.h&gt;
+#include &lt;BLE2902.h&gt;
+#include &lt;ArduinoJson.h&gt;
+
+// UUIDs matching ble_constants.dart
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define DEVICE_NAME         "PRANA_BAND_PRO"
+
+BLEServer* pServer = NULL;
+BLECharacteristic* pTelemetryCharacteristic = NULL;
+bool deviceConnected = false;
+
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+      Serial.println("PRANA App Connected via BLE!");
+    }
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+      Serial.println("App Disconnected! Restarting Advertising...");
+      BLEDevice::startAdvertising();
+    }
+};
+
+void setup() {
+  Serial.begin(115200);
+
+  // Initialize BLE Server
+  BLEDevice::init(DEVICE_NAME);
+  pServer = BLEDevice::createServer();
+  pServer-&gt;setCallbacks(new MyServerCallbacks());
+
+  // Create GATT Service &amp; Characteristic
+  BLEService *pService = pServer-&gt;createService(SERVICE_UUID);
+  pTelemetryCharacteristic = pService-&gt;createCharacteristic(
+                      CHARACTERISTIC_UUID,
+                      BLECharacteristic::PROPERTY_READ   |
+                      BLECharacteristic::PROPERTY_NOTIFY
+                    );
+  pTelemetryCharacteristic-&gt;addDescriptor(new BLE2902());
+
+  pService-&gt;start();
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising-&gt;addServiceUUID(SERVICE_UUID);
+  pAdvertising-&gt;setScanResponse(true);
+  BLEDevice::startAdvertising();
+
+  Serial.println("ESP32 BLE Advertising as: " DEVICE_NAME);
+}
+
+void loop() {
+  if (deviceConnected) {
+    // 1. Read your physical sensors (MAX30102, MPU6050, DHT22)
+    float hr = 76.0 + random(-2, 3);
+    float spo2 = 98.2 + (random(0, 10) / 10.0);
+    float temp = 36.7;
+    int steps = 3420;
+    int battery = 88;
+
+    // 2. Build JSON telemetry payload
+    StaticJsonDocument&lt;256&gt; doc;
+    doc["heartRate"] = hr;
+    doc["spo2"] = spo2;
+    doc["temperature"] = temp;
+    doc["activityLevel"] = "Moderate";
+    doc["steps"] = steps;
+    doc["accX"] = 0.02;
+    doc["accY"] = 0.04;
+    doc["accZ"] = 0.98;
+    doc["battery"] = battery;
+
+    char buffer[256];
+    serializeJson(doc, buffer);
+
+    // 3. Send over BLE Notify
+    pTelemetryCharacteristic-&gt;setValue((uint8_t*)buffer, strlen(buffer));
+    pTelemetryCharacteristic-&gt;notify();
+
+    Serial.print("Sent Telemetry: ");
+    Serial.println(buffer);
+  }
+  delay(1000); // 1-second transmission interval
+}</code></pre>
+
+<h2>5. Verification &amp; Troubleshooting Checklist</h2>
+<ol>
+  <li><strong>Bluetooth &amp; GPS Location:</strong> Ensure both Bluetooth and Location are switched ON on your testing smartphone (Android requires location permission to discover BLE peripherals).</li>
+  <li><strong>ESP32 Serial Monitor:</strong> Open Arduino Serial Monitor at 115200 baud to confirm the device starts advertising.</li>
+  <li><strong>Pairing in App:</strong> Open the PRANA app &rarr; Devices Tab &rarr; Toggle off "Simulator Mode" &rarr; Tap "Scan for Devices" &rarr; Tap "Connect" on <code>PRANA_BAND_PRO</code>.</li>
+  <li><strong>Data Confirmation:</strong> The heart rate and SpO2 readings on the Home Dashboard will update in real time every second.</li>
+</ol>
+
+</body>
+</html>
